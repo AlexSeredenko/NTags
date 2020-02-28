@@ -7,6 +7,47 @@
         mc:Ignorable="d"
         Title="MainWindowView" Height="450" Width="800">
     <Grid>
-        
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            
+            <Menu Grid.Row="0">
+                <MenuItem Header="File">
+                    <MenuItem Header="Open folder" Command="{Binding Path=OpenFolder}"/>
+                    <Separator/>
+                    <MenuItem Header="Exit" Command="{Binding Path=Exit}"/>
+                </MenuItem>
+            </Menu>
+            
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Margin="0,5,0,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="5"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="5"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="20"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="1" Text="Current folder:"/>
+                    <TextBlock Grid.Column="3" FontWeight="Bold" Text="{Binding Path=CurrentFolderName}"/>
+                    <Button Grid.Column="7" Content="{Binding Path=StartStopText}" Command="{Binding Path=StartStop}"/>
+                </Grid>
+                
+                
+            </Grid>
+            
+        </Grid>
     </Grid>
 </Window>

@@ -17,8 +17,9 @@ namespace NTag.Views
     /// </summary>
     public partial class MainWindowView : Window
     {
-        public MainWindowView()
+        public MainWindowView(object dataContext)
         {
+            DataContext = dataContext;
             InitializeComponent();
         }
     }
