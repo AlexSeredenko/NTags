@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Input;
+using System.Windows;
 using Prism.Mvvm;
 using Prism.Commands;
-using System.Windows;
+using UnidecodeSharpFork;
 
 namespace NTag.ViewModels
 {

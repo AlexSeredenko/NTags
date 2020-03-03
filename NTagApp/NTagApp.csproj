@@ -4,10 +4,10 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
-    <Product>Tag Editor</Product>
+    <Product>Norm Tag Editor</Product>
     <Company></Company>
     <Authors>Seredenko</Authors>
-    <PackageId>Tag Editor</PackageId>
+    <PackageId>Norm Tag Editor</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
