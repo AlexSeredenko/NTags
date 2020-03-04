@@ -44,8 +44,8 @@
                     <TextBlock Grid.Column="3" FontWeight="Bold" Text="{Binding Path=CurrentFolderName}"/>
                     <Button Grid.Column="7" Content="{Binding Path=StartStopText}" Command="{Binding Path=StartStop}"/>
                 </Grid>
-                
-                
+
+                <Image Grid.Row="1" Source="{Binding Path=SongImage}"/>
             </Grid>
             
         </Grid>

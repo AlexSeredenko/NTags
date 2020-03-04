@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Windows.Input;
+using System.Linq;
 using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using Prism.Mvvm;
 using Prism.Commands;
 using UnidecodeSharpFork;
+using TagLib;
+using TagLib.Id3v2;
 
 namespace NTag.ViewModels
 {
@@ -17,6 +21,14 @@ namespace NTag.ViewModels
         private ICommand _openFolder;
         private ICommand _exit;
         private ICommand _startStop;
+
+        private BitmapFrame _songImage;
+        public BitmapFrame SongImage
+        {
+            get { return _songImage; }
+            set { SetProperty(ref _songImage, value); }
+        }
+
 
         public string CurrentFolderName
         {
@@ -47,7 +59,7 @@ namespace NTag.ViewModels
 
         private void OpenFolderExecute()
         {
-            CurrentFolderName = @"C:\Data";            
+            CurrentFolderName = @"C:\Data";
         }
 
         private bool OpenFolderCanExecute()
@@ -68,6 +80,47 @@ namespace NTag.ViewModels
         private void StartStopExecute()
         {
             StartStopText = "Stop";
+
+            //var tfile = File.Create(@"C:\Users\oleksandr.seredenko\Downloads\billie-eilish-bellyache(mp3name.net).mp3");
+            //tfile.RemoveTags(TagTypes.AllTags);
+            //tfile.Save();
+
+            var tfile = File.Create(@"C:\Users\oleksandr.seredenko\Downloads\billie-eilish-bellyache(mp3name.net).mp3");
+            tfile.Tag.Album = "Downloads".Unidecode();
+            tfile.Tag.Performers = new string[] { "billie eilish" };
+            tfile.Tag.Title = "bellyache";
+            var img = tfile.Tag.Pictures.FirstOrDefault();
+
+            var imgData = img.Data.ToArray();
+            var ms = new System.IO.MemoryStream(imgData);
+
+            var imgExt = img.MimeType.Split("/").LastOrDefault();
+
+            if (!string.IsNullOrEmpty(imgExt))
+            {
+                using (var fs = new System.IO.FileStream(@"D:\123." + imgExt, System.IO.FileMode.CreateNew))
+                {
+                    fs.Write(imgData, 0, imgData.Length);
+                }
+            }
+
+            var t = img.GetType();
+            AttachmentFrame attachmentFrame;
+
+            var pic = new Picture(@"D:\tagimg.jpg");
+            pic.Type = PictureType.BackCover;
+
+            tfile.Tag.Pictures = new IPicture[] { pic };
+
+            System.Diagnostics.Trace.WriteLine("");
+            //tfile.Save();
+            ms.Position = 0;
+            var bitmapImage = BitmapFrame.Create(ms);
+            var t2 = bitmapImage.GetType();
+
+            System.Diagnostics.Trace.WriteLine("");
+
+            SongImage = bitmapImage;
         }
 
         private bool StartStopCanExecute()
