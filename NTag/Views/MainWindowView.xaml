@@ -45,7 +45,46 @@
                     <Button Grid.Column="7" Content="{Binding Path=StartStopText}" Command="{Binding Path=StartStop}"/>
                 </Grid>
 
-                <Image Grid.Row="1" Source="{Binding Path=SongImage}"/>
+                <ListBox Grid.Row="1">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <Grid Grid.Column="0">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Grid.Row="0" Text="{Binding Path=OriginalFileName}"/>
+                                    <Grid Grid.Row="1">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Image Grid.Column="0" Source="{Binding Path=OriginalImageVisible}"/>
+                                        <Grid Grid.Column="1">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+                                            <TextBlock Grid.Row="0" Text="{Binding Path=OriginalAlbum}"/>
+                                            <TextBlock Grid.Row="1" Text="{Binding Path=OriginalPerformer}"/>
+                                            <TextBlock Grid.Row="2" Text="{Binding Path=OriginalTitle}"/>
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                                
+                                <Grid Grid.Column="1">
+                                </Grid>                                
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </Grid>
             
         </Grid>

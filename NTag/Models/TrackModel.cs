@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text;
-using System.Windows.Input;
 using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using Prism.Mvvm;
 using Prism.Commands;
 using UnidecodeSharpFork;
@@ -12,20 +14,27 @@ namespace NTag.Models
 {
     public class TrackModel : BindableBase
     {
-        private string _filePath;
+        private string _fileDir;        
 
         private string _originalFileName;
         private string _originalAlbum;
         private string _originalPerformer;
         private string _originalTitle;
         private IPicture _originalImage;
+        private BitmapFrame _originalImageVisible;
 
         private string _modifiedFileName;
         private string _modifiedAlbum;
         private string _modifiedPerformer;
         private string _modifiedTitle;
         private IPicture _modifiedImage;
+        private BitmapFrame _modifiedImageVisible;
 
+        public string FileDir
+        {
+            get { return _fileDir; }
+            set { _fileDir = value; }
+        }
 
         public string OriginalFileName
         {
@@ -54,7 +63,13 @@ namespace NTag.Models
         public IPicture OriginalImage
         {
             get { return _originalImage; }
-            set { SetProperty(ref _originalImage, value); }
+            set { SetOriginalImage(value); }
+        }
+
+        public BitmapFrame OriginalImageVisible
+        {
+            get { return _originalImageVisible; }
+            set { SetProperty(ref _originalImageVisible, value); }
         }
 
         public string ModifiedFileName
@@ -84,7 +99,33 @@ namespace NTag.Models
         public IPicture ModifiedImage
         {
             get { return _modifiedImage; }
-            set { SetProperty(ref _modifiedImage, value); }
+            set { SetModifiedImage(value); }
+        }
+
+        public BitmapFrame ModifiedImageVisible
+        {
+            get { return _modifiedImageVisible; }
+            set { SetProperty(ref _modifiedImageVisible, value); }
+        }
+
+        private BitmapFrame GetBitmapFrameFromPicture(IPicture picture)
+        {
+            var pictureMemoryStream = new System.IO.MemoryStream(picture.Data.ToArray());
+            pictureMemoryStream.Position = 0;
+            var bitmapFrame = BitmapFrame.Create(pictureMemoryStream);
+            return bitmapFrame;
+        }
+
+        private void SetOriginalImage(IPicture picture)
+        {
+            _originalImage = picture;
+            OriginalImageVisible = GetBitmapFrameFromPicture(picture);
+        }
+
+        private void SetModifiedImage(IPicture picture)
+        {
+            _modifiedImage = picture;
+            ModifiedImageVisible = GetBitmapFrameFromPicture(picture);
         }
     }
 }
