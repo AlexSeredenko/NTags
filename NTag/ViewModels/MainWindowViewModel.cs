@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
@@ -10,6 +11,7 @@ using Prism.Commands;
 using UnidecodeSharpFork;
 using TagLib;
 using TagLib.Id3v2;
+using NTag.Models;
 
 namespace NTag.ViewModels
 {
@@ -21,6 +23,8 @@ namespace NTag.ViewModels
         private ICommand _openFolder;
         private ICommand _exit;
         private ICommand _startStop;
+
+        public ObservableCollection<TrackModel> TrackModels { get; set; }
 
         private BitmapFrame _songImage;
         public BitmapFrame SongImage
@@ -55,6 +59,24 @@ namespace NTag.ViewModels
         private void Init()
         {
             _startStopText = "Start";
+
+            TrackModels = new ObservableCollection<TrackModel>();
+
+            for (int i = 0; i < 10; i++)
+            {
+                TrackModels.Add(new TrackModel()
+                {
+                    FileDir = @"C:\",
+                    OriginalFileName = "Original file name" + $" #{i}",
+                    OriginalAlbum = "Original album" + $" #{i}",
+                    OriginalPerformer = "Original performer" + $" #{i}",
+                    OriginalTitle = "Original title" + $" #{i}",
+                    ModifiedFileName = "Modified file name" + $" #{i}",
+                    ModifiedAlbum = "Modified album" + $" #{i}",
+                    ModifiedPerformer = "Modified performer" + $" #{i}",
+                    ModifiedTitle = "Modified title" + $" #{i}"
+                });
+            }
         }
 
         private void OpenFolderExecute()

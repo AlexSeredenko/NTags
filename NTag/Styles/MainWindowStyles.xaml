@@ -1,0 +1,131 @@
+﻿<ResourceDictionary x:Class="NTag.Styles.MainWindowStyles"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:NTag.Styles"
+             mc:Ignorable="d">
+
+    <DataTemplate x:Key="TrackTamplate">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition MinWidth="80"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" 
+                           Grid.ColumnSpan="2" 
+                           Grid.Row="0"                           
+                           HorizontalAlignment="Right" 
+                           FontWeight="Bold"
+                           Text="Original file:" />
+                
+                <TextBlock Grid.Row="0" 
+                           Grid.Column="3" 
+                           HorizontalAlignment="Left"
+                           Text="{Binding Path=OriginalFileName}"/>
+
+                <Image Grid.Row="1" Grid.RowSpan="3" Grid.Column="0"
+                       Height="32"
+                       Width="32"
+                       Stretch="UniformToFill"
+                       Source="{Binding Path=OriginalImageVisible}"/>
+
+ 
+                 <TextBlock Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" Text="Album:" />
+                 <TextBlock Grid.Row="1" 
+                            Grid.Column="3" 
+                            HorizontalAlignment="Left" 
+                            Text="{Binding Path=OriginalAlbum}"/>
+
+                 <TextBlock Grid.Row="2" Grid.Column="1" HorizontalAlignment="Right" Text="Performer:" />
+                 <TextBlock Grid.Row="2" 
+                            Grid.Column="3" 
+                            HorizontalAlignment="Left" 
+                            Text="{Binding Path=OriginalPerformer}"/>
+                      
+                 <TextBlock Grid.Row="3" Grid.Column="1" HorizontalAlignment="Right" Text="Title:" />
+                 <TextBlock Grid.Row="3" 
+                            Grid.Column="3" 
+                            HorizontalAlignment="Left" 
+                            Text="{Binding Path=OriginalTitle}"/>
+            </Grid>
+            
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition MinWidth="80"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" 
+                           Grid.ColumnSpan="2" 
+                           Grid.Row="0"                           
+                           HorizontalAlignment="Right" 
+                           FontWeight="Bold"
+                           Text="Modified file:" />
+
+                <TextBox Grid.Row="0" 
+                         Grid.Column="3"
+                         Width="200"
+                         Margin="0,1,0,1" 
+                         HorizontalAlignment="Left" 
+                         Text="{Binding Path=ModifiedFileName}"/>
+
+                <Image Grid.Row="1" Grid.RowSpan="3" Grid.Column="0"
+                       Height="32"
+                       Width="32"
+                       Stretch="UniformToFill"
+                       Source="{Binding Path=ModifiedImageVisible}"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" Text="Album:" />
+                <TextBox Grid.Row="1" 
+                         Grid.Column="3" 
+                         Width="200" 
+                         Margin="0,1,0,1" 
+                         HorizontalAlignment="Left" 
+                         Text="{Binding Path=ModifiedAlbum}"/>
+
+                <TextBlock Grid.Row="2" Grid.Column="1" HorizontalAlignment="Right" Text="Performer:" />
+                <TextBox Grid.Row="2" 
+                         Grid.Column="3" 
+                         Width="200" 
+                         Margin="0,1,0,1" 
+                         HorizontalAlignment="Left" 
+                         Text="{Binding Path=ModifiedPerformer}"/>
+
+                <TextBlock Grid.Row="3" Grid.Column="1" HorizontalAlignment="Right" Text="Title:" />
+                <TextBox Grid.Row="3" 
+                         Grid.Column="3" 
+                         Width="200" 
+                         Margin="0,1,0,1" 
+                         HorizontalAlignment="Left" 
+                         Text="{Binding Path=ModifiedTitle}"/>
+            </Grid>
+            
+        </Grid>
+    </DataTemplate>
+
+
+</ResourceDictionary>
