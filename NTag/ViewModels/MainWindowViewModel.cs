@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using Microsoft.Win32;
 using Prism.Mvvm;
 using Prism.Commands;
 using UnidecodeSharpFork;
@@ -13,26 +14,20 @@ using TagLib;
 using TagLib.Id3v2;
 using NTag.Models;
 
+
 namespace NTag.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {
         private string _currentFolderName;
         private string _startStopText;
+        private MainWindowModel _mainWindowModel;
 
         private ICommand _openFolder;
         private ICommand _exit;
         private ICommand _startStop;
 
-        public ObservableCollection<TrackModel> TrackModels { get; set; }
-
-        private BitmapFrame _songImage;
-        public BitmapFrame SongImage
-        {
-            get { return _songImage; }
-            set { SetProperty(ref _songImage, value); }
-        }
-
+        public ObservableCollection<TrackModel> TrackModels => _mainWindowModel?.TrackModels;
 
         public string CurrentFolderName
         {
@@ -59,29 +54,23 @@ namespace NTag.ViewModels
         private void Init()
         {
             _startStopText = "Start";
+            _mainWindowModel = new MainWindowModel();
 
-            TrackModels = new ObservableCollection<TrackModel>();
-
-            for (int i = 0; i < 10; i++)
-            {
-                TrackModels.Add(new TrackModel()
-                {
-                    FileDir = @"C:\",
-                    OriginalFileName = "Original file name" + $" #{i}",
-                    OriginalAlbum = "Original album" + $" #{i}",
-                    OriginalPerformer = "Original performer" + $" #{i}",
-                    OriginalTitle = "Original title" + $" #{i}",
-                    ModifiedFileName = "Modified file name" + $" #{i}",
-                    ModifiedAlbum = "Modified album" + $" #{i}",
-                    ModifiedPerformer = "Modified performer" + $" #{i}",
-                    ModifiedTitle = "Modified title" + $" #{i}"
-                });
-            }
         }
 
         private void OpenFolderExecute()
         {
-            CurrentFolderName = @"C:\Data";
+            var openDialog = new Gat.Controls.OpenDialogView();
+            var dialogViewModel = (Gat.Controls.OpenDialogViewModel)openDialog.DataContext;
+            dialogViewModel.DateFormat = Gat.Controls.OpenDialogViewModel.ISO8601_DateFormat;
+            dialogViewModel.IsDirectoryChooser = true;
+
+            var result = dialogViewModel.Show();
+            if (result == true && dialogViewModel.SelectedFolder != null)
+            {
+                CurrentFolderName = dialogViewModel.SelectedFolder.Path;
+                _mainWindowModel.OpenFolder(CurrentFolderName);
+            }
         }
 
         private bool OpenFolderCanExecute()
@@ -141,8 +130,6 @@ namespace NTag.ViewModels
             var t2 = bitmapImage.GetType();
 
             System.Diagnostics.Trace.WriteLine("");
-
-            SongImage = bitmapImage;
         }
 
         private bool StartStopCanExecute()

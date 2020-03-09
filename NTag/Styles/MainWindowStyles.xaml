@@ -22,7 +22,7 @@
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
-                    <ColumnDefinition MinWidth="80"/>
+                    <ColumnDefinition Width="auto"/>
                     <ColumnDefinition Width="10"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
@@ -33,38 +33,46 @@
                            HorizontalAlignment="Right" 
                            FontWeight="Bold"
                            Text="Original file:" />
-                
+
                 <TextBlock Grid.Row="0" 
                            Grid.Column="3" 
                            HorizontalAlignment="Left"
                            Text="{Binding Path=OriginalFileName}"/>
 
-                <Image Grid.Row="1" Grid.RowSpan="3" Grid.Column="0"
-                       Height="32"
-                       Width="32"
-                       Stretch="UniformToFill"
-                       Source="{Binding Path=OriginalImageVisible}"/>
+                <Border Grid.Row="1" 
+                        Grid.RowSpan="3" 
+                        Grid.Column="0" 
+                        Width="48" 
+                        Height="48" 
+                        Margin="5,0,5,0" 
+                        BorderThickness="1" 
+                        BorderBrush="Gray" >
+                    <Image VerticalAlignment="Stretch"
+                           HorizontalAlignment="Stretch"
+                           Stretch="UniformToFill"
+                           Source="{Binding Path=OriginalImageVisible}"/>
+                </Border>
 
- 
-                 <TextBlock Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" Text="Album:" />
-                 <TextBlock Grid.Row="1" 
-                            Grid.Column="3" 
-                            HorizontalAlignment="Left" 
-                            Text="{Binding Path=OriginalAlbum}"/>
 
-                 <TextBlock Grid.Row="2" Grid.Column="1" HorizontalAlignment="Right" Text="Performer:" />
-                 <TextBlock Grid.Row="2" 
-                            Grid.Column="3" 
-                            HorizontalAlignment="Left" 
-                            Text="{Binding Path=OriginalPerformer}"/>
-                      
-                 <TextBlock Grid.Row="3" Grid.Column="1" HorizontalAlignment="Right" Text="Title:" />
-                 <TextBlock Grid.Row="3" 
-                            Grid.Column="3" 
-                            HorizontalAlignment="Left" 
-                            Text="{Binding Path=OriginalTitle}"/>
+                <TextBlock Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" Text="Album:" />
+                <TextBlock Grid.Row="1" 
+                           Grid.Column="3" 
+                           HorizontalAlignment="Left" 
+                           Text="{Binding Path=OriginalAlbum}"/>
+
+                <TextBlock Grid.Row="2" Grid.Column="1" HorizontalAlignment="Right" Text="Performer:" />
+                <TextBlock Grid.Row="2" 
+                           Grid.Column="3" 
+                           HorizontalAlignment="Left" 
+                           Text="{Binding Path=OriginalPerformer}"/>
+
+                <TextBlock Grid.Row="3" Grid.Column="1" HorizontalAlignment="Right" Text="Title:" />
+                <TextBlock Grid.Row="3" 
+                           Grid.Column="3" 
+                           HorizontalAlignment="Left" 
+                           Text="{Binding Path=OriginalTitle}"/>
             </Grid>
-            
+
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
@@ -74,7 +82,7 @@
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
-                    <ColumnDefinition MinWidth="80"/>
+                    <ColumnDefinition Width="auto"/>
                     <ColumnDefinition Width="10"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
@@ -93,11 +101,19 @@
                          HorizontalAlignment="Left" 
                          Text="{Binding Path=ModifiedFileName}"/>
 
-                <Image Grid.Row="1" Grid.RowSpan="3" Grid.Column="0"
-                       Height="32"
-                       Width="32"
-                       Stretch="UniformToFill"
-                       Source="{Binding Path=ModifiedImageVisible}"/>
+                <Border Grid.Row="1" 
+                        Grid.RowSpan="3" 
+                        Grid.Column="0" 
+                        Width="48" 
+                        Height="48" 
+                        Margin="5,0,5,0" 
+                        BorderThickness="1" 
+                        BorderBrush="Gray" >
+                    <Image VerticalAlignment="Stretch"
+                           HorizontalAlignment="Stretch"
+                           Stretch="UniformToFill"
+                           Source="{Binding Path=ModifiedImageVisible}"/>
+                </Border>
 
                 <TextBlock Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" Text="Album:" />
                 <TextBox Grid.Row="1" 
@@ -123,7 +139,7 @@
                          HorizontalAlignment="Left" 
                          Text="{Binding Path=ModifiedTitle}"/>
             </Grid>
-            
+
         </Grid>
     </DataTemplate>
 
