@@ -9,6 +9,7 @@ using NTag.Views;
 using NTag.ViewModels;
 using System.Reflection;
 using System.Diagnostics;
+using NTagApp.Models;
 
 namespace NTagApp
 {
@@ -19,7 +20,7 @@ namespace NTagApp
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            var mainWindowViewModel = new MainWindowViewModel();
+            var mainWindowViewModel = new MainWindowViewModel(new ConfigurationModel());
             var mainWindow = new MainWindowView(mainWindowViewModel);            
             mainWindow.Title = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location).ProductName;
             Application.Current.MainWindow = mainWindow;
