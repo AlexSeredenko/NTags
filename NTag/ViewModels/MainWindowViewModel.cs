@@ -13,7 +13,7 @@ using UnidecodeSharpFork;
 using TagLib;
 using TagLib.Id3v2;
 using NTag.Models;
-
+using NTag.Interfaces;
 
 namespace NTag.ViewModels
 {
@@ -46,15 +46,15 @@ namespace NTag.ViewModels
         public ICommand StartStop => _startStop ?? (_startStop = new DelegateCommand(StartStopExecute, StartStopCanExecute));
 
 
-        public MainWindowViewModel()
+        public MainWindowViewModel(IConfiguration configuration)
         {
-            Init();
+            Init(configuration);
         }
 
-        private void Init()
+        private void Init(IConfiguration configuration)
         {
             _startStopText = "Start";
-            _mainWindowModel = new MainWindowModel();
+            _mainWindowModel = new MainWindowModel(configuration);
 
         }
 

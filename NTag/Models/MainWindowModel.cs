@@ -4,15 +4,20 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
+using NTag.Interfaces;
 
 namespace NTag.Models
 {
     public class MainWindowModel
     {
+        private IConfiguration _configuration;
+
         public ObservableCollection<TrackModel> TrackModels { get; set; }
 
-        public MainWindowModel()
+        public MainWindowModel(IConfiguration configuration)
         {
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+
             TrackModels = new ObservableCollection<TrackModel>();
 
             for (int i = 0; i < 10; i++)
@@ -34,7 +39,7 @@ namespace NTag.Models
 
         public void OpenFolder(string folderPath)
         {
-            var supportedFormats = new string[] { ".mp3" };
+            var supportedFormats = _configuration.SupportedFormats;
             var mediaFiles = Directory.GetFiles(folderPath, "*.*", SearchOption.TopDirectoryOnly)
                 .Where(x => supportedFormats.Contains(Path.GetExtension(x).ToLower())).ToArray();
         }
