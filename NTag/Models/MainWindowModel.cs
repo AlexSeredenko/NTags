@@ -23,29 +23,34 @@ namespace NTag.Models
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
             TrackModels = new ObservableCollection<TrackModel>();
+        }
 
-            //for (int i = 0; i < 10; i++)
-            //{
-            //    TrackModels.Add(new TrackModel()
-            //    {
-            //        FileDir = @"C:\",
-            //        OriginalFileName = "Original file name" + $" #{i}",
-            //        OriginalAlbum = "Original album" + $" #{i}",
-            //        OriginalPerformer = "Original performer" + $" #{i}",
-            //        OriginalTitle = "Original title" + $" #{i}",
-            //        ModifiedFileName = "Modified file name" + $" #{i}",
-            //        ModifiedAlbum = "Modified album" + $" #{i}",
-            //        ModifiedPerformer = "Modified performer" + $" #{i}",
-            //        ModifiedTitle = "Modified title" + $" #{i}"
-            //    });
-            //}
+        private Task<IPicture> LoadPictureAsync(string imgPath)
+        {
+            return Task.Run(() =>
+            {
+                if (!System.IO.File.Exists(imgPath))
+                {
+                    throw new FileNotFoundException(imgPath);
+                }
+
+                var pic = new Picture(imgPath);
+                pic.Type = PictureType.BackCover;
+
+                return (IPicture)pic;
+            });
         }
 
         private Task<TrackModel> CreateTrackModelAsync(string filePath)
         {
             return Task.Run(() =>
             {
-                var tagFile = TagLib.File.Create(filePath);                
+                var tagFile = TagLib.File.Create(filePath);
+                var modifiedFileName = Path.GetFileName(filePath).Unidecode();
+                var modifiedAlbum = Directory.GetParent(filePath).Name.Unidecode();
+                var modifiedPerformer = tagFile.Tag.Performers.FirstOrDefault().Unidecode();
+                var modifiedTitle = tagFile.Tag.Title.Unidecode();
+
                 var trackModel = new TrackModel()
                 {
                     FileDir = Path.GetDirectoryName(filePath),
@@ -53,10 +58,12 @@ namespace NTag.Models
                     OriginalAlbum = tagFile.Tag.Album,
                     OriginalPerformer = tagFile.Tag.Performers.FirstOrDefault(),
                     OriginalTitle = tagFile.Tag.Title,
-                    ModifiedFileName = Path.GetFileName(filePath).Unidecode(),
-                    ModifiedAlbum = Directory.GetParent(filePath).Name,
-                    //ModifiedPerformer = "Modified performer" + $" #{i}",
-                    //ModifiedTitle = "Modified title" + $" #{i}"
+                    OriginalImage = tagFile.Tag.Pictures.FirstOrDefault(),
+                    ModifiedFileName = modifiedFileName,
+                    ModifiedAlbum = modifiedAlbum,
+                    ModifiedPerformer = modifiedPerformer,
+                    ModifiedTitle = modifiedTitle,
+                    ModifiedImage = tagFile.Tag.Pictures.FirstOrDefault()
                 };
 
                 return trackModel;
@@ -75,6 +82,37 @@ namespace NTag.Models
             {
                 var trackModel = await CreateTrackModelAsync(mediaFile);
                 TrackModels.Add(trackModel);
+            }
+        }
+
+        public void SetPicture(TrackModel trackModel, IPicture pic)
+        {
+            trackModel.ModifiedImage = pic;
+        }
+
+        public void DuplicatePictureAll(TrackModel trackModel)
+        {
+            var pic = trackModel.ModifiedImage;
+
+            foreach (var tm in TrackModels.Where(x => !x.Equals(trackModel)))
+            {
+                SetPicture(tm, pic);
+            }
+        }
+
+        public async void SetPictureFromFile(TrackModel trackModel, string imgPath)
+        {
+            var pic = await LoadPictureAsync(imgPath);
+            SetPicture(trackModel, pic);
+        }
+
+        public async void SetPictureFromFileAll(string imgPath)
+        {
+            var pic = await LoadPictureAsync(imgPath);
+
+            foreach (var trackModel in TrackModels)
+            {
+                SetPicture(trackModel, pic);
             }
         }
     }
