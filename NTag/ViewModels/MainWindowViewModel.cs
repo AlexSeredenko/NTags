@@ -26,6 +26,7 @@ namespace NTag.ViewModels
         private ICommand _openFolder;
         private ICommand _exit;
         private ICommand _startStop;
+        private ICommand _setPictureFromFile;
 
         public ObservableCollection<TrackModel> TrackModels => _mainWindowModel?.TrackModels;
 
@@ -44,6 +45,7 @@ namespace NTag.ViewModels
         public ICommand OpenFolder => _openFolder ?? (_openFolder = new DelegateCommand(OpenFolderExecute, OpenFolderCanExecute));
         public ICommand Exit => _exit ?? (_exit = new DelegateCommand(ExitExecute, ExitCanExecute));
         public ICommand StartStop => _startStop ?? (_startStop = new DelegateCommand(StartStopExecute, StartStopCanExecute));
+        public ICommand SetPictureFromFile => _setPictureFromFile ?? (_setPictureFromFile = new DelegateCommand<object>(SetPictureFromFileExecute, SetPictureFromFileCanExecute));
 
 
         public MainWindowViewModel(IConfiguration configuration)
@@ -133,6 +135,16 @@ namespace NTag.ViewModels
         }
 
         private bool StartStopCanExecute()
+        {
+            return true;
+        }
+
+        private void SetPictureFromFileExecute(object sender)
+        {
+            System.Diagnostics.Trace.WriteLine(sender?.GetType().Name ?? "");
+        }
+        
+        private bool SetPictureFromFileCanExecute(object sender)
         {
             return true;
         }
