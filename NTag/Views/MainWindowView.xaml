@@ -61,7 +61,7 @@
                         <ContextMenu>
                             <MenuItem Header="Load picture from file" 
                                       Command="{Binding Path=SetPictureFromFile}"
-                                      CommandParameter="{Binding ElementName=tracksList, Path=SelectedIndex}"/>
+                                      CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Path=PlacementTarget.SelectedItem}"/>
                         </ContextMenu>
                     </ListBox.ContextMenu>
                 </ListBox>
