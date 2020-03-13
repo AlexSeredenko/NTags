@@ -200,7 +200,12 @@ namespace NTag.Models
                 tagfile.Tag.Album = track.ModifiedAlbum;
                 tagfile.Tag.Performers = new string[] { track.ModifiedPerformer };
                 tagfile.Tag.Title = track.ModifiedTitle;
-                tagfile.Tag.Pictures = new IPicture[] { track.ModifiedImage };
+                
+                if (track.ModifiedImage != null)
+                {
+                    tagfile.Tag.Pictures = new IPicture[] { track.ModifiedImage };
+                }
+
                 tagfile.Save();
             }
         }
