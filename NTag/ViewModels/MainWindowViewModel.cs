@@ -19,6 +19,7 @@ namespace NTag.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {
+        private IConfiguration _configuration;
         private string _currentFolderName;
         private string _startStopText;
         private MainWindowModel _mainWindowModel;
@@ -27,6 +28,10 @@ namespace NTag.ViewModels
         private ICommand _exit;
         private ICommand _startStop;
         private ICommand _setPictureFromFile;
+        private ICommand _applyPictureForAll;
+        private ICommand _applyAlbumForAll;
+        private ICommand _applyPerformerForAll;
+        private ICommand _applyTitleForAll;
 
         public ObservableCollection<TrackModel> TrackModels => _mainWindowModel?.TrackModels;
 
@@ -42,11 +47,29 @@ namespace NTag.ViewModels
             set { SetProperty(ref _startStopText, value); }
         }
 
-        public ICommand OpenFolder => _openFolder ?? (_openFolder = new DelegateCommand(OpenFolderExecute, OpenFolderCanExecute));
-        public ICommand Exit => _exit ?? (_exit = new DelegateCommand(ExitExecute, ExitCanExecute));
-        public ICommand StartStop => _startStop ?? (_startStop = new DelegateCommand(StartStopExecute, StartStopCanExecute));
-        public ICommand SetPictureFromFile => _setPictureFromFile ?? (_setPictureFromFile = new DelegateCommand<object>(SetPictureFromFileExecute, SetPictureFromFileCanExecute));
+        public ICommand OpenFolder => _openFolder ??
+            (_openFolder = new DelegateCommand(OpenFolderExecute, OpenFolderCanExecute));
 
+        public ICommand Exit => _exit ??
+            (_exit = new DelegateCommand(ExitExecute, ExitCanExecute));
+
+        public ICommand StartStop => _startStop ??
+            (_startStop = new DelegateCommand(StartStopExecute, StartStopCanExecute));
+
+        public ICommand SetPictureFromFile => _setPictureFromFile ??
+            (_setPictureFromFile = new DelegateCommand<object>(SetPictureFromFileExecute, SetPictureFromFileCanExecute));
+
+        public ICommand ApplyPictureForAll => _applyPictureForAll ??
+            (_applyPictureForAll = new DelegateCommand<object>(ApplyPictureForAllExecute, ApplyPictureForAllCanExecute));
+
+        public ICommand ApplyAlbumForAll => _applyAlbumForAll ??
+            (_applyAlbumForAll = new DelegateCommand<object>(ApplyAlbumForAllExecute, ApplyAlbumForAllCanExecute));
+
+        public ICommand ApplyPerformerForAll => _applyPerformerForAll ??
+            (_applyPerformerForAll = new DelegateCommand<object>(ApplyPerformerForAllExecute, ApplyPerformerForAllCanExecute));
+
+        public ICommand ApplyTitleForAll => _applyTitleForAll ??
+            (_applyTitleForAll = new DelegateCommand<object>(ApplyTitleForAllExecute, ApplyTitleForAllCanExecute));
 
         public MainWindowViewModel(IConfiguration configuration)
         {
@@ -55,9 +78,9 @@ namespace NTag.ViewModels
 
         private void Init(IConfiguration configuration)
         {
+            _configuration = configuration;
             _startStopText = "Start";
             _mainWindowModel = new MainWindowModel(configuration);
-
         }
 
         private void OpenFolderExecute()
@@ -141,10 +164,70 @@ namespace NTag.ViewModels
 
         private void SetPictureFromFileExecute(object sender)
         {
-            System.Diagnostics.Trace.WriteLine(sender?.GetType().Name ?? "");
+            if (sender is TrackModel trackModel)
+            {
+                var openFileDialog = new OpenFileDialog();
+                openFileDialog.Filter = "Images |" + string.Join($";", _configuration.SupportedImageFormats.Select(x => $"*{x}"));
+                if (openFileDialog.ShowDialog() == true)
+                {
+                    _mainWindowModel.SetPictureFromFile(trackModel, openFileDialog.FileName);
+                }
+            }
         }
-        
+
         private bool SetPictureFromFileCanExecute(object sender)
+        {
+            return true;
+        }
+
+        private void ApplyPictureForAllExecute(object sender)
+        {
+            if (sender is TrackModel trackModel)
+            {
+                _mainWindowModel.DuplicatePictureAll(trackModel);
+            }
+        }
+
+        private bool ApplyPictureForAllCanExecute(object sender)
+        {
+            return true;
+        }
+
+        private void ApplyAlbumForAllExecute(object sender)
+        {
+            if (sender is TrackModel trackModel)
+            {
+                _mainWindowModel.DuplicateAlbumAll(trackModel);
+            }
+        }
+
+        private bool ApplyAlbumForAllCanExecute(object sender)
+        {
+            return true;
+        }
+
+        private void ApplyPerformerForAllExecute(object sender)
+        {
+            if (sender is TrackModel trackModel)
+            {
+                _mainWindowModel.DuplicatePerformerAll(trackModel);
+            }
+        }
+
+        private bool ApplyPerformerForAllCanExecute(object sender)
+        {
+            return true;
+        }
+
+        private void ApplyTitleForAllExecute(object sender)
+        {
+            if (sender is TrackModel trackModel)
+            {
+                _mainWindowModel.DuplicateTitleAll(trackModel);
+            }
+        }
+
+        private bool ApplyTitleForAllCanExecute(object sender)
         {
             return true;
         }

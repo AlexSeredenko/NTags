@@ -90,6 +90,64 @@ namespace NTag.Models
             trackModel.ModifiedImage = pic;
         }
 
+        public async void SetPictureFromFile(TrackModel trackModel, string imgPath)
+        {
+            var pic = await LoadPictureAsync(imgPath);
+            SetPicture(trackModel, pic);
+        }
+
+        public void TitleFromFileName(TrackModel trackModel)
+        {
+            var title = string.Empty;
+
+            if (trackModel.ModifiedFileName.Contains("-"))
+            {
+                title = trackModel.ModifiedFileName.Split("-").LastOrDefault();
+            }
+
+            if (string.IsNullOrEmpty(title))
+            {
+                title = trackModel.ModifiedFileName;
+            }
+
+            trackModel.ModifiedTitle = title;
+        }
+
+        public void PerformerFromFileName(TrackModel trackModel)
+        {
+            var performer = string.Empty;
+
+            if (trackModel.ModifiedFileName.Contains("-"))
+            {
+                performer = trackModel.ModifiedFileName.Split("-").FirstOrDefault();
+            }
+
+            if (string.IsNullOrEmpty(performer))
+            {
+                performer = trackModel.ModifiedFileName;
+            }
+
+            trackModel.ModifiedPerformer = performer;
+        }
+
+        public void FileNameFromTags(TrackModel trackModel)
+        {
+            if (!string.IsNullOrEmpty(trackModel.ModifiedPerformer) && 
+                !string.IsNullOrEmpty(trackModel.ModifiedTitle))
+            {
+                var ext = Path.GetExtension(trackModel.ModifiedFileName);
+                trackModel.ModifiedFileName = $"{trackModel.ModifiedPerformer} - {trackModel.ModifiedTitle}{ext}";
+            }           
+        }
+
+        public void FileNameFromTagsAll()
+        {
+            foreach (var tm in TrackModels)
+            {
+                FileNameFromTags(tm);
+            }
+        }
+
         public void DuplicatePictureAll(TrackModel trackModel)
         {
             var pic = trackModel.ModifiedImage;
@@ -100,19 +158,27 @@ namespace NTag.Models
             }
         }
 
-        public async void SetPictureFromFile(TrackModel trackModel, string imgPath)
+        public void DuplicateAlbumAll(TrackModel trackModel)
         {
-            var pic = await LoadPictureAsync(imgPath);
-            SetPicture(trackModel, pic);
+            foreach (var tm in TrackModels.Where(x => !x.Equals(trackModel)))
+            {
+                tm.ModifiedAlbum = trackModel.ModifiedAlbum;
+            }
         }
 
-        public async void SetPictureFromFileAll(string imgPath)
+        public void DuplicatePerformerAll(TrackModel trackModel)
         {
-            var pic = await LoadPictureAsync(imgPath);
-
-            foreach (var trackModel in TrackModels)
+            foreach (var tm in TrackModels.Where(x => !x.Equals(trackModel)))
             {
-                SetPicture(trackModel, pic);
+                tm.ModifiedPerformer = trackModel.ModifiedPerformer;
+            }
+        }
+
+        public void DuplicateTitleAll(TrackModel trackModel)
+        {
+            foreach (var tm in TrackModels.Where(x => !x.Equals(trackModel)))
+            {
+                tm.ModifiedTitle = trackModel.ModifiedTitle;
             }
         }
     }
