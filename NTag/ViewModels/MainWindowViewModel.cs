@@ -32,6 +32,10 @@ namespace NTag.ViewModels
         private ICommand _applyAlbumForAll;
         private ICommand _applyPerformerForAll;
         private ICommand _applyTitleForAll;
+        private ICommand _titleFromFileName;
+        private ICommand _performerFromFileName;
+        private ICommand _fileNameFromTags;
+        private ICommand _fileNameFromTagsAll;
 
         public ObservableCollection<TrackModel> TrackModels => _mainWindowModel?.TrackModels;
 
@@ -70,6 +74,18 @@ namespace NTag.ViewModels
 
         public ICommand ApplyTitleForAll => _applyTitleForAll ??
             (_applyTitleForAll = new DelegateCommand<object>(ApplyTitleForAllExecute, ApplyTitleForAllCanExecute));
+
+        public ICommand TitleFromFileName => _titleFromFileName ??
+            (_titleFromFileName = new DelegateCommand<object>(TitleFromFileNameExecute, TitleFromFileNameCanExecute));
+
+        public ICommand PerformerFromFileName => _performerFromFileName ??
+                    (_performerFromFileName = new DelegateCommand<object>(PerformerFromFileNameExecute, PerformerFromFileNameCanExecute));
+
+        public ICommand FileNameFromTags => _fileNameFromTags ??
+                    (_fileNameFromTags = new DelegateCommand<object>(FileNameFromTagsExecute, FileNameFromTagsCanExecute));
+
+        public ICommand FileNameFromTagsAll => _fileNameFromTagsAll ??
+                    (_fileNameFromTagsAll = new DelegateCommand(FileNameFromTagsAllExecute, FileNameFromTagsAllCanExecute));
 
         public MainWindowViewModel(IConfiguration configuration)
         {
@@ -115,46 +131,8 @@ namespace NTag.ViewModels
 
         private void StartStopExecute()
         {
-            StartStopText = "Stop";
-
-            //var tfile = File.Create(@"C:\Users\oleksandr.seredenko\Downloads\billie-eilish-bellyache(mp3name.net).mp3");
-            //tfile.RemoveTags(TagTypes.AllTags);
-            //tfile.Save();
-
-            var tfile = File.Create(@"C:\Users\oleksandr.seredenko\Downloads\billie-eilish-bellyache(mp3name.net).mp3");
-            tfile.Tag.Album = "Downloads".Unidecode();
-            tfile.Tag.Performers = new string[] { "billie eilish" };
-            tfile.Tag.Title = "bellyache";
-            var img = tfile.Tag.Pictures.FirstOrDefault();
-
-            var imgData = img.Data.ToArray();
-            var ms = new System.IO.MemoryStream(imgData);
-
-            var imgExt = img.MimeType.Split("/").LastOrDefault();
-
-            if (!string.IsNullOrEmpty(imgExt))
-            {
-                using (var fs = new System.IO.FileStream(@"D:\123." + imgExt, System.IO.FileMode.CreateNew))
-                {
-                    fs.Write(imgData, 0, imgData.Length);
-                }
-            }
-
-            var t = img.GetType();
-            AttachmentFrame attachmentFrame;
-
-            var pic = new Picture(@"D:\tagimg.jpg");
-            pic.Type = PictureType.BackCover;
-
-            tfile.Tag.Pictures = new IPicture[] { pic };
-
-            System.Diagnostics.Trace.WriteLine("");
-            //tfile.Save();
-            ms.Position = 0;
-            var bitmapImage = BitmapFrame.Create(ms);
-            var t2 = bitmapImage.GetType();
-
-            System.Diagnostics.Trace.WriteLine("");
+            _mainWindowModel.Start();
+            MessageBox.Show("Done!");
         }
 
         private bool StartStopCanExecute()
@@ -228,6 +206,56 @@ namespace NTag.ViewModels
         }
 
         private bool ApplyTitleForAllCanExecute(object sender)
+        {
+            return true;
+        }
+
+
+        private void TitleFromFileNameExecute(object sender)
+        {
+            if (sender is TrackModel trackModel)
+            {
+                _mainWindowModel.TitleFromFileName(trackModel);
+            }
+        }
+
+        private bool TitleFromFileNameCanExecute(object sender)
+        {
+            return true;
+        }
+
+        private void PerformerFromFileNameExecute(object sender)
+        {
+            if (sender is TrackModel trackModel)
+            {
+                _mainWindowModel.PerformerFromFileName(trackModel);
+            }
+        }
+
+        private bool PerformerFromFileNameCanExecute(object sender)
+        {
+            return true;
+        }
+
+        private void FileNameFromTagsExecute(object sender)
+        {
+            if (sender is TrackModel trackModel)
+            {
+                _mainWindowModel.FileNameFromTags(trackModel);
+            }
+        }
+
+        private bool FileNameFromTagsCanExecute(object sender)
+        {
+            return true;
+        }
+
+        private void FileNameFromTagsAllExecute()
+        {
+            _mainWindowModel.FileNameFromTagsAll();
+        }
+
+        private bool FileNameFromTagsAllCanExecute()
         {
             return true;
         }

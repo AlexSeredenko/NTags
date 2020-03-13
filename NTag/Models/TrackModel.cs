@@ -110,6 +110,11 @@ namespace NTag.Models
 
         private BitmapFrame GetBitmapFrameFromPicture(IPicture picture)
         {
+            if (picture == null || picture.Type == PictureType.NotAPicture)
+            {
+                return null;
+            }
+
             var pictureMemoryStream = new System.IO.MemoryStream(picture.Data.ToArray());
             pictureMemoryStream.Position = 0;
             var bitmapFrame = BitmapFrame.Create(pictureMemoryStream);

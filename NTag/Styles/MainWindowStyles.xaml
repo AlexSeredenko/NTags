@@ -143,5 +143,34 @@
         </Grid>
     </DataTemplate>
 
+    <ContextMenu x:Key="TrackContextMenu">
+        <MenuItem Header="Load picture from file" 
+                  Command="{Binding Path=SetPictureFromFile}"
+                  CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Path=PlacementTarget.SelectedItem}"/>
+        <MenuItem Header="Performer from file name"
+                  Command="{Binding Path=PerformerFromFileName}"
+                  CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Path=PlacementTarget.SelectedItem}"/>
+        <MenuItem Header="Title from file name"
+                  Command="{Binding Path=TitleFromFileName}"
+                  CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Path=PlacementTarget.SelectedItem}"/>
+        <MenuItem Header="File name from tags"
+                  Command="{Binding Path=FileNameFromTags}"
+                  CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Path=PlacementTarget.SelectedItem}"/>
+        <MenuItem Header="File name from tags all"
+                  Command="{Binding Path=FileNameFromTagsAll}"/>
+        <Separator/>
+        <MenuItem Header="Apply picture for all" 
+                  Command="{Binding Path=ApplyPictureForAll}"
+                  CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Path=PlacementTarget.SelectedItem}"/>
+        <MenuItem Header="Apply album for all" 
+                  Command="{Binding Path=ApplyAlbumForAll}"
+                  CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Path=PlacementTarget.SelectedItem}"/>
+        <MenuItem Header="Apply performer for all" 
+                  Command="{Binding Path=ApplyPerformerForAll}"
+                  CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Path=PlacementTarget.SelectedItem}"/>
+        <MenuItem Header="Apply title for all" 
+                  Command="{Binding Path=ApplyTitleForAll}"
+                  CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Path=PlacementTarget.SelectedItem}"/>
+    </ContextMenu>
 
 </ResourceDictionary>

@@ -102,7 +102,7 @@ namespace NTag.Models
 
             if (trackModel.ModifiedFileName.Contains("-"))
             {
-                title = trackModel.ModifiedFileName.Split("-").LastOrDefault();
+                title = trackModel.ModifiedFileName.Split("-").LastOrDefault()?.Trim();
             }
 
             if (string.IsNullOrEmpty(title))
@@ -110,7 +110,7 @@ namespace NTag.Models
                 title = trackModel.ModifiedFileName;
             }
 
-            trackModel.ModifiedTitle = title;
+            trackModel.ModifiedTitle = Path.GetFileNameWithoutExtension(title);
         }
 
         public void PerformerFromFileName(TrackModel trackModel)
@@ -119,7 +119,7 @@ namespace NTag.Models
 
             if (trackModel.ModifiedFileName.Contains("-"))
             {
-                performer = trackModel.ModifiedFileName.Split("-").FirstOrDefault();
+                performer = trackModel.ModifiedFileName.Split("-").FirstOrDefault()?.Trim();
             }
 
             if (string.IsNullOrEmpty(performer))
@@ -136,7 +136,7 @@ namespace NTag.Models
                 !string.IsNullOrEmpty(trackModel.ModifiedTitle))
             {
                 var ext = Path.GetExtension(trackModel.ModifiedFileName);
-                trackModel.ModifiedFileName = $"{trackModel.ModifiedPerformer} - {trackModel.ModifiedTitle}{ext}";
+                trackModel.ModifiedFileName = $"{trackModel.ModifiedPerformer.Trim()} - {trackModel.ModifiedTitle.Trim()}{ext}";
             }           
         }
 
@@ -179,6 +179,29 @@ namespace NTag.Models
             foreach (var tm in TrackModels.Where(x => !x.Equals(trackModel)))
             {
                 tm.ModifiedTitle = trackModel.ModifiedTitle;
+            }
+        }
+
+        public void Start()
+        {
+            foreach(var track in TrackModels)
+            {
+                if (!track.OriginalFileName.Equals(track.ModifiedFileName))
+                {
+                    System.IO.File.Move(Path.Combine(track.FileDir, track.OriginalFileName),
+                        Path.Combine(track.FileDir, track.ModifiedFileName));
+                }
+
+                var tagfile = TagLib.File.Create(Path.Combine(track.FileDir, track.ModifiedFileName));
+                tagfile.RemoveTags(TagTypes.AllTags);
+                tagfile.Save();
+
+                tagfile = TagLib.File.Create(Path.Combine(track.FileDir, track.ModifiedFileName));
+                tagfile.Tag.Album = track.ModifiedAlbum;
+                tagfile.Tag.Performers = new string[] { track.ModifiedPerformer };
+                tagfile.Tag.Title = track.ModifiedTitle;
+                tagfile.Tag.Pictures = new IPicture[] { track.ModifiedImage };
+                tagfile.Save();
             }
         }
     }
