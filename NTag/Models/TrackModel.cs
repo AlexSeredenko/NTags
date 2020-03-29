@@ -1,20 +1,15 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
-using System.Windows.Input;
+﻿using System.Linq;
 using System.Windows.Media.Imaging;
 using Prism.Mvvm;
-using Prism.Commands;
-using UnidecodeSharpFork;
 using TagLib;
 
 namespace NTag.Models
 {
     public class TrackModel : BindableBase
     {
-        private string _fileDir;        
+        private int _trackNumber;
+        private bool _isEven;
+        private string _fileDir;
 
         private string _originalFileName;
         private string _originalAlbum;
@@ -29,6 +24,22 @@ namespace NTag.Models
         private string _modifiedTitle;
         private IPicture _modifiedImage;
         private BitmapFrame _modifiedImageVisible;
+
+        public int TrackNumber
+        {
+            get { return _trackNumber; }
+            set 
+            { 
+                SetProperty(ref _trackNumber, value);
+                IsEven = _trackNumber % 2 == 0;
+            }
+        }
+
+        public bool IsEven
+        {
+            get { return _isEven; }
+            private set { SetProperty(ref _isEven, value); }
+        }
 
         public string FileDir
         {

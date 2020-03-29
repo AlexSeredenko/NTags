@@ -41,7 +41,7 @@ namespace NTag.Models
             });
         }
 
-        private Task<TrackModel> CreateTrackModelAsync(string filePath)
+        private Task<TrackModel> CreateTrackModelAsync(string filePath, int num)
         {
             return Task.Run(() =>
             {
@@ -53,6 +53,7 @@ namespace NTag.Models
 
                 var trackModel = new TrackModel()
                 {
+                    TrackNumber = num,
                     FileDir = Path.GetDirectoryName(filePath),
                     OriginalFileName = Path.GetFileName(filePath),
                     OriginalAlbum = tagFile.Tag.Album,
@@ -80,7 +81,7 @@ namespace NTag.Models
 
             foreach (var mediaFile in mediaFiles)
             {
-                var trackModel = await CreateTrackModelAsync(mediaFile);
+                var trackModel = await CreateTrackModelAsync(mediaFile, TrackModels.Count + 1);
                 TrackModels.Add(trackModel);
             }
         }

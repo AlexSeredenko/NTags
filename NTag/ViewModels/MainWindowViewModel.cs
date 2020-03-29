@@ -140,6 +140,17 @@ namespace NTag.ViewModels
             return true;
         }
 
+        private bool ConfirmApplyForAll(TrackModel trackModel, string tagName)
+        {
+            var msg = $"Apply {tagName} from track {trackModel.TrackNumber} for All?";
+            if (MessageBox.Show(msg, "Batch Dialog", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         private void SetPictureFromFileExecute(object sender)
         {
             if (sender is TrackModel trackModel)
@@ -160,7 +171,7 @@ namespace NTag.ViewModels
 
         private void ApplyPictureForAllExecute(object sender)
         {
-            if (sender is TrackModel trackModel)
+            if (sender is TrackModel trackModel && ConfirmApplyForAll(trackModel, "Picture"))
             {
                 _mainWindowModel.DuplicatePictureAll(trackModel);
             }
@@ -173,7 +184,7 @@ namespace NTag.ViewModels
 
         private void ApplyAlbumForAllExecute(object sender)
         {
-            if (sender is TrackModel trackModel)
+            if (sender is TrackModel trackModel && ConfirmApplyForAll(trackModel, "Album"))
             {
                 _mainWindowModel.DuplicateAlbumAll(trackModel);
             }
@@ -186,7 +197,7 @@ namespace NTag.ViewModels
 
         private void ApplyPerformerForAllExecute(object sender)
         {
-            if (sender is TrackModel trackModel)
+            if (sender is TrackModel trackModel && ConfirmApplyForAll(trackModel, "Performer"))
             {
                 _mainWindowModel.DuplicatePerformerAll(trackModel);
             }
@@ -199,7 +210,7 @@ namespace NTag.ViewModels
 
         private void ApplyTitleForAllExecute(object sender)
         {
-            if (sender is TrackModel trackModel)
+            if (sender is TrackModel trackModel && ConfirmApplyForAll(trackModel, "Title"))
             {
                 _mainWindowModel.DuplicateTitleAll(trackModel);
             }
@@ -252,6 +263,12 @@ namespace NTag.ViewModels
 
         private void FileNameFromTagsAllExecute()
         {
+            var msg = "Apply file names to file names from tags for All?";
+            if (MessageBox.Show(msg, "Batch Dialog", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+            {
+                return;
+            }
+
             _mainWindowModel.FileNameFromTagsAll();
         }
 

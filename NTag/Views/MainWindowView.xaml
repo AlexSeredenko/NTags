@@ -13,22 +13,38 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
-    
+
     <Grid>
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            
+
             <Menu Grid.Row="0">
                 <MenuItem Header="File">
                     <MenuItem Header="Open folder" Command="{Binding Path=OpenFolder}"/>
                     <Separator/>
                     <MenuItem Header="Exit" Command="{Binding Path=Exit}"/>
                 </MenuItem>
+                <MenuItem Header="Batch">
+                    <MenuItem Header="File name from tags all"
+                              Command="{Binding Path=FileNameFromTagsAll}"/>
+                    <MenuItem Header="Apply picture for all" 
+                              Command="{Binding Path=ApplyPictureForAll}"
+                              CommandParameter="{Binding ElementName=tracksList, Path=SelectedItem}"/>
+                    <MenuItem Header="Apply album for all" 
+                              Command="{Binding Path=ApplyAlbumForAll}"
+                              CommandParameter="{Binding ElementName=tracksList, Path=SelectedItem}"/>
+                    <MenuItem Header="Apply performer for all" 
+                              Command="{Binding Path=ApplyPerformerForAll}"
+                              CommandParameter="{Binding ElementName=tracksList, Path=SelectedItem}"/>
+                    <MenuItem Header="Apply title for all" 
+                              Command="{Binding Path=ApplyTitleForAll}"
+                              CommandParameter="{Binding ElementName=tracksList, Path=SelectedItem}"/>
+                </MenuItem>
             </Menu>
-            
+
             <Grid Grid.Row="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto" />
@@ -56,11 +72,11 @@
                 <ListBox x:Name="tracksList" Grid.Row="1"
                          HorizontalContentAlignment="Stretch"
                          ItemsSource="{Binding Path=TrackModels}"
-                         ItemTemplate="{StaticResource TrackTamplate}"
+                         ItemTemplate="{StaticResource TrackTamplate}"                         
                          ContextMenu="{StaticResource TrackContextMenu}">
                 </ListBox>
             </Grid>
-            
+
         </Grid>
     </Grid>
 </Window>

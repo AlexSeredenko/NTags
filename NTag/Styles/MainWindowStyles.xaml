@@ -4,16 +4,42 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:NTag.Styles"
+             xmlns:Converters="clr-namespace:NTag.Converters"
              mc:Ignorable="d">
 
+    <Converters:TrackNumberConverter x:Key="TrackNumberConverter"/>
+    <Converters:TrackNumberToParityConverter x:Key="TrackNumberToParityConverter"/>
+
+    <Color x:Key="EvenTrackBackground">#FFDCDCDC</Color>
+    
+    <Style x:Key="TrackTamplateStyle" TargetType="Grid">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Path=TrackNumber, Converter={StaticResource TrackNumberToParityConverter}}" Value="True">
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <SolidColorBrush Color="{StaticResource EvenTrackBackground}"/>
+                    </Setter.Value>
+                </Setter>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
     <DataTemplate x:Key="TrackTamplate">
-        <Grid>
+        <Grid Style="{StaticResource TrackTamplateStyle}">
+            
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
             <Grid Grid.Column="0">
+                <TextBlock VerticalAlignment="Center" 
+                           HorizontalAlignment="Center" 
+                           Text="{Binding Path=TrackNumber, Converter={StaticResource TrackNumberConverter}}"/>
+            </Grid>
+
+            <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
@@ -73,7 +99,7 @@
                            Text="{Binding Path=OriginalTitle}"/>
             </Grid>
 
-            <Grid Grid.Column="1">
+            <Grid Grid.Column="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
@@ -155,21 +181,6 @@
                   CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Path=PlacementTarget.SelectedItem}"/>
         <MenuItem Header="File name from tags"
                   Command="{Binding Path=FileNameFromTags}"
-                  CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Path=PlacementTarget.SelectedItem}"/>
-        <MenuItem Header="File name from tags all"
-                  Command="{Binding Path=FileNameFromTagsAll}"/>
-        <Separator/>
-        <MenuItem Header="Apply picture for all" 
-                  Command="{Binding Path=ApplyPictureForAll}"
-                  CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Path=PlacementTarget.SelectedItem}"/>
-        <MenuItem Header="Apply album for all" 
-                  Command="{Binding Path=ApplyAlbumForAll}"
-                  CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Path=PlacementTarget.SelectedItem}"/>
-        <MenuItem Header="Apply performer for all" 
-                  Command="{Binding Path=ApplyPerformerForAll}"
-                  CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Path=PlacementTarget.SelectedItem}"/>
-        <MenuItem Header="Apply title for all" 
-                  Command="{Binding Path=ApplyTitleForAll}"
                   CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Path=PlacementTarget.SelectedItem}"/>
     </ContextMenu>
 
