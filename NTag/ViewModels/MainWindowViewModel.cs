@@ -14,6 +14,8 @@ using TagLib;
 using TagLib.Id3v2;
 using NTag.Models;
 using NTag.Interfaces;
+using System.Windows.Threading;
+using System.Threading;
 
 namespace NTag.ViewModels
 {
@@ -22,6 +24,9 @@ namespace NTag.ViewModels
         private IConfiguration _configuration;
         private string _currentFolderName;
         private string _startStopText;
+        private double _progressValue;
+        private Visibility _progressVisibility;
+        private bool _isInProgress;
         private MainWindowModel _mainWindowModel;
 
         private ICommand _openFolder;
@@ -51,32 +56,50 @@ namespace NTag.ViewModels
             set { SetProperty(ref _startStopText, value); }
         }
 
+        public double ProgressValue
+        {
+            get { return _progressValue; }
+            set { SetProperty(ref _progressValue, value); }
+        }
+
+        public Visibility ProgressVisibility
+        {
+            get { return _progressVisibility; }
+            set { SetProperty(ref _progressVisibility, value); }
+        }
+
+        public bool IsInProgress
+        {
+            get { return _isInProgress; }
+            set { SetProperty(ref _isInProgress, value); }
+        }
+
         public ICommand OpenFolder => _openFolder ??
-            (_openFolder = new DelegateCommand(OpenFolderExecute, OpenFolderCanExecute));
+                    (_openFolder = new DelegateCommand(OpenFolderExecute, OpenFolderCanExecute));
 
         public ICommand Exit => _exit ??
-            (_exit = new DelegateCommand(ExitExecute, ExitCanExecute));
+                    (_exit = new DelegateCommand(ExitExecute, ExitCanExecute));
 
         public ICommand StartStop => _startStop ??
-            (_startStop = new DelegateCommand(StartStopExecute, StartStopCanExecute));
+                    (_startStop = new DelegateCommand(StartStopExecute, StartStopCanExecute));
 
         public ICommand SetPictureFromFile => _setPictureFromFile ??
-            (_setPictureFromFile = new DelegateCommand<object>(SetPictureFromFileExecute, SetPictureFromFileCanExecute));
+                    (_setPictureFromFile = new DelegateCommand<object>(SetPictureFromFileExecute, SetPictureFromFileCanExecute));
 
         public ICommand ApplyPictureForAll => _applyPictureForAll ??
-            (_applyPictureForAll = new DelegateCommand<object>(ApplyPictureForAllExecute, ApplyPictureForAllCanExecute));
+                    (_applyPictureForAll = new DelegateCommand<object>(ApplyPictureForAllExecute, ApplyPictureForAllCanExecute));
 
         public ICommand ApplyAlbumForAll => _applyAlbumForAll ??
-            (_applyAlbumForAll = new DelegateCommand<object>(ApplyAlbumForAllExecute, ApplyAlbumForAllCanExecute));
+                    (_applyAlbumForAll = new DelegateCommand<object>(ApplyAlbumForAllExecute, ApplyAlbumForAllCanExecute));
 
         public ICommand ApplyPerformerForAll => _applyPerformerForAll ??
-            (_applyPerformerForAll = new DelegateCommand<object>(ApplyPerformerForAllExecute, ApplyPerformerForAllCanExecute));
+                    (_applyPerformerForAll = new DelegateCommand<object>(ApplyPerformerForAllExecute, ApplyPerformerForAllCanExecute));
 
         public ICommand ApplyTitleForAll => _applyTitleForAll ??
-            (_applyTitleForAll = new DelegateCommand<object>(ApplyTitleForAllExecute, ApplyTitleForAllCanExecute));
+                    (_applyTitleForAll = new DelegateCommand<object>(ApplyTitleForAllExecute, ApplyTitleForAllCanExecute));
 
         public ICommand TitleFromFileName => _titleFromFileName ??
-            (_titleFromFileName = new DelegateCommand<object>(TitleFromFileNameExecute, TitleFromFileNameCanExecute));
+                    (_titleFromFileName = new DelegateCommand<object>(TitleFromFileNameExecute, TitleFromFileNameCanExecute));
 
         public ICommand PerformerFromFileName => _performerFromFileName ??
                     (_performerFromFileName = new DelegateCommand<object>(PerformerFromFileNameExecute, PerformerFromFileNameCanExecute));
@@ -96,7 +119,24 @@ namespace NTag.ViewModels
         {
             _configuration = configuration;
             _startStopText = "Start";
-            _mainWindowModel = new MainWindowModel(configuration);
+            _progressValue = 0;
+            _progressVisibility = Visibility.Hidden;
+            _mainWindowModel = new MainWindowModel(configuration)
+            {
+                ProgressChanged = OnProgressChanged,
+                ProcessingStarted = OnProcessingStarted,
+                ProcessingFinished = OnProcessingFinished
+            };
+
+            //for debug
+            CurrentFolderName = @"C:\Data\muz\Bi-2";
+            _mainWindowModel.OpenFolder(CurrentFolderName);
+            //--
+        }
+
+        private void UIBeginInvoke(Action callback)
+        {
+            Application.Current?.Dispatcher.BeginInvoke(DispatcherPriority.Normal, callback);
         }
 
         private void OpenFolderExecute()
@@ -129,10 +169,18 @@ namespace NTag.ViewModels
             return true;
         }
 
-        private void StartStopExecute()
+        private async void StartStopExecute()
         {
-            _mainWindowModel.Start();
-            MessageBox.Show("Done!");
+            if (IsInProgress)
+            {
+                _mainWindowModel.Stop();
+            }
+            else
+            {
+                await _mainWindowModel.StartAsync();
+                IsInProgress = false;
+                MessageBox.Show("Done!");
+            }
         }
 
         private bool StartStopCanExecute()
@@ -275,6 +323,25 @@ namespace NTag.ViewModels
         private bool FileNameFromTagsAllCanExecute()
         {
             return true;
+        }
+
+        private void OnProcessingStarted()
+        {
+            ProgressVisibility = Visibility.Visible;
+        }
+
+        private void OnProcessingFinished()
+        {
+        }
+
+        private void OnProgressChanged(int totalCount, int doneCount)
+        {
+            var progressValue = Math.Truncate((double)doneCount / totalCount * 100D);
+            UIBeginInvoke(() =>
+            {
+                IsInProgress = true;
+                ProgressValue = progressValue;
+            });
         }
     }
 }

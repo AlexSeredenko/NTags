@@ -57,16 +57,29 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="5"/>
                         <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="5"/>
-                        <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="20"/>
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Grid.Column="1" Text="Current folder:"/>
-                    <TextBlock Grid.Column="3" FontWeight="Bold" Text="{Binding Path=CurrentFolderName}"/>
-                    <Button Grid.Column="7" Content="{Binding Path=StartStopText}" Command="{Binding Path=StartStop}"/>
+                    <TextBlock Grid.Column="3" 
+                               FontWeight="Bold" 
+                               Text="{Binding Path=CurrentFolderName}"/>
+                    <ProgressBar Grid.Column="5" 
+                                 Width="120"
+                                 Height="20"
+                                 Maximum="100"
+                                 Minimum="0"
+                                 Visibility="{Binding Path=ProgressVisibility}"
+                                 Value="{Binding Path=ProgressValue}"/>
+                    <Button Grid.Column="7" 
+                            MinWidth="80"
+                            Height="20"
+                            Content="{Binding Path=StartStopText}" 
+                            Command="{Binding Path=StartStop}"/>
                 </Grid>
 
                 <ListBox x:Name="tracksList" Grid.Row="1"

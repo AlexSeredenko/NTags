@@ -9,12 +9,18 @@ using TagLib;
 using TagLib.Id3v2;
 using NTag.Interfaces;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace NTag.Models
 {
     public class MainWindowModel
     {
         private IConfiguration _configuration;
+        private CancellationTokenSource _cancellationTokenSource;
+
+        public Action ProcessingStarted { get; set; }
+        public Action ProcessingFinished { get; set; }
+        public Action<int, int> ProgressChanged { get; set; }
 
         public ObservableCollection<TrackModel> TrackModels { get; set; }
 
@@ -133,12 +139,12 @@ namespace NTag.Models
 
         public void FileNameFromTags(TrackModel trackModel)
         {
-            if (!string.IsNullOrEmpty(trackModel.ModifiedPerformer) && 
+            if (!string.IsNullOrEmpty(trackModel.ModifiedPerformer) &&
                 !string.IsNullOrEmpty(trackModel.ModifiedTitle))
             {
                 var ext = Path.GetExtension(trackModel.ModifiedFileName);
                 trackModel.ModifiedFileName = $"{trackModel.ModifiedPerformer.Trim()} - {trackModel.ModifiedTitle.Trim()}{ext}";
-            }           
+            }
         }
 
         public void FileNameFromTagsAll()
@@ -183,32 +189,54 @@ namespace NTag.Models
             }
         }
 
-        public void Start()
+        public void Start(CancellationToken cancellationToken)
         {
-            foreach(var track in TrackModels)
+            ProcessingStarted?.Invoke();
+
+            try
             {
-                if (!track.OriginalFileName.Equals(track.ModifiedFileName))
+                for (int i = 0; i < TrackModels.Count; i++)
                 {
-                    System.IO.File.Move(Path.Combine(track.FileDir, track.OriginalFileName),
-                        Path.Combine(track.FileDir, track.ModifiedFileName));
+                    cancellationToken.ThrowIfCancellationRequested();
+                    var track = TrackModels[i];
+
+                    if (!track.OriginalFileName.Equals(track.ModifiedFileName))
+                    {
+                        System.IO.File.Move(Path.Combine(track.FileDir, track.OriginalFileName),
+                            Path.Combine(track.FileDir, track.ModifiedFileName));
+                    }
+
+                    var tagfile = TagLib.File.Create(Path.Combine(track.FileDir, track.ModifiedFileName));
+                    tagfile.RemoveTags(TagTypes.AllTags);
+                    tagfile.Save();
+
+                    tagfile = TagLib.File.Create(Path.Combine(track.FileDir, track.ModifiedFileName));
+                    tagfile.Tag.Album = track.ModifiedAlbum;
+                    tagfile.Tag.Performers = new string[] { track.ModifiedPerformer };
+                    tagfile.Tag.Title = track.ModifiedTitle;
+
+                    if (track.ModifiedImage != null)
+                    {
+                        tagfile.Tag.Pictures = new IPicture[] { track.ModifiedImage };
+                    }
+
+                    tagfile.Save();
+                    ProgressChanged?.Invoke(TrackModels.Count, i + 1);
                 }
-
-                var tagfile = TagLib.File.Create(Path.Combine(track.FileDir, track.ModifiedFileName));
-                tagfile.RemoveTags(TagTypes.AllTags);
-                tagfile.Save();
-
-                tagfile = TagLib.File.Create(Path.Combine(track.FileDir, track.ModifiedFileName));
-                tagfile.Tag.Album = track.ModifiedAlbum;
-                tagfile.Tag.Performers = new string[] { track.ModifiedPerformer };
-                tagfile.Tag.Title = track.ModifiedTitle;
-                
-                if (track.ModifiedImage != null)
-                {
-                    tagfile.Tag.Pictures = new IPicture[] { track.ModifiedImage };
-                }
-
-                tagfile.Save();
             }
+            catch (OperationCanceledException)
+            { }
+        }
+
+        public Task StartAsync()
+        {
+            _cancellationTokenSource = new CancellationTokenSource();
+            return Task.Run(() => Start(_cancellationTokenSource.Token));
+        }
+
+        public void Stop()
+        {
+            _cancellationTokenSource.Cancel();
         }
     }
 }
