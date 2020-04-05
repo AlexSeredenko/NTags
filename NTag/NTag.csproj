@@ -14,10 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\External\Gat.Controls.OpenDialog\Gat.Controls.OpenDialog.csproj" />
     <ProjectReference Include="..\External\UnidecodeSharpFork\UnidecodeSharpFork.csproj">
-      <Private>true</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\Gat.Controls.OpenDialog\Gat.Controls.OpenDialog.csproj">
       <Private>true</Private>
     </ProjectReference>
   </ItemGroup>
