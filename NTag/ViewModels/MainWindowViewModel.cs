@@ -56,8 +56,8 @@ namespace NTag.ViewModels
         public bool IsInProgress
         {
             get { return _isInProgress; }
-            set 
-            { 
+            set
+            {
                 SetProperty(ref _isInProgress, value);
                 RaiseCanExecuteChanged();
             }
@@ -99,12 +99,12 @@ namespace NTag.ViewModels
         public DelegateCommandBase FileNameFromTagsAll => _fileNameFromTagsAll ??
                     (_fileNameFromTagsAll = new DelegateCommand(FileNameFromTagsAllExecute, FileNameFromTagsAllCanExecute));
 
-        public MainWindowViewModel(IConfiguration configuration)
+        public MainWindowViewModel(IConfiguration configuration, string initFolder = null)
         {
-            Init(configuration);
+            Init(configuration, initFolder);
         }
 
-        private void Init(IConfiguration configuration)
+        private void Init(IConfiguration configuration, string initFolder = null)
         {
             _configuration = configuration;
             _progressValue = 0;
@@ -116,10 +116,11 @@ namespace NTag.ViewModels
                 ProcessingFinished = OnProcessingFinished
             };
 
-            //for debug
-            CurrentFolderName = @"C:\Data\muz\Bi-2";
-            _mainWindowModel.OpenFolder(CurrentFolderName);
-            //--
+            if (!string.IsNullOrEmpty(initFolder))
+            {
+                CurrentFolderName = initFolder;
+                _mainWindowModel.OpenFolder(CurrentFolderName);
+            }
         }
 
         private void UIBeginInvoke(Action callback)
