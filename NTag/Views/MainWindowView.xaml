@@ -4,13 +4,17 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NTag.Views"
+        xmlns:Converters="clr-namespace:NTag.Converters"
         mc:Ignorable="d"
-        Title="MainWindowView" Height="450" Width="800">
+        Title="MainWindowView" 
+        Height="500" Width="900">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/NTag;component/Styles/MainWindowStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <Converters:StartButtonTextConverter x:Key="StartButtonTextConverter"/>
         </ResourceDictionary>
     </Window.Resources>
 
@@ -78,7 +82,7 @@
                     <Button Grid.Column="7" 
                             MinWidth="80"
                             Height="20"
-                            Content="{Binding Path=StartStopText}" 
+                            Content="{Binding Path=IsInProgress, Converter={StaticResource StartButtonTextConverter}}" 
                             Command="{Binding Path=StartStop}"/>
                 </Grid>
 

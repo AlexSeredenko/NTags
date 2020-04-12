@@ -1,15 +1,13 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Collections.ObjectModel;
-using System.Text;
 using UnidecodeSharpFork;
 using TagLib;
-using TagLib.Id3v2;
 using NTag.Interfaces;
-using System.Threading.Tasks;
-using System.Threading;
 
 namespace NTag.Models
 {
@@ -77,8 +75,16 @@ namespace NTag.Models
             });
         }
 
+        [Conditional("DEBUG")]
+        private void DebugTimeout(int timeout)
+        {
+            Thread.Sleep(1000);
+        }
+
         private void ProcessTrack(TrackModel track)
         {
+            DebugTimeout(1000);
+
             try
             {
                 if (!track.OriginalFileName.Equals(track.ModifiedFileName))
@@ -238,6 +244,8 @@ namespace NTag.Models
             }
             catch (OperationCanceledException)
             { }
+
+            ProcessingFinished?.Invoke();
         }
 
         public Task StartAsync()

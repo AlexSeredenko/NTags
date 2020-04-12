@@ -1,21 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Linq;
-using System.Collections.ObjectModel;
 using System.Windows;
-using System.Windows.Input;
-using System.Windows.Media.Imaging;
+using System.Windows.Threading;
+using System.Collections.ObjectModel;
 using Microsoft.Win32;
 using Prism.Mvvm;
 using Prism.Commands;
-using UnidecodeSharpFork;
-using TagLib;
-using TagLib.Id3v2;
 using NTag.Models;
 using NTag.Interfaces;
-using System.Windows.Threading;
-using System.Threading;
 
 namespace NTag.ViewModels
 {
@@ -23,24 +15,23 @@ namespace NTag.ViewModels
     {
         private IConfiguration _configuration;
         private string _currentFolderName;
-        private string _startStopText;
         private double _progressValue;
         private Visibility _progressVisibility;
         private bool _isInProgress;
         private MainWindowModel _mainWindowModel;
 
-        private ICommand _openFolder;
-        private ICommand _exit;
-        private ICommand _startStop;
-        private ICommand _setPictureFromFile;
-        private ICommand _applyPictureForAll;
-        private ICommand _applyAlbumForAll;
-        private ICommand _applyPerformerForAll;
-        private ICommand _applyTitleForAll;
-        private ICommand _titleFromFileName;
-        private ICommand _performerFromFileName;
-        private ICommand _fileNameFromTags;
-        private ICommand _fileNameFromTagsAll;
+        private DelegateCommandBase _openFolder;
+        private DelegateCommandBase _exit;
+        private DelegateCommandBase _startStop;
+        private DelegateCommandBase _setPictureFromFile;
+        private DelegateCommandBase _applyPictureForAll;
+        private DelegateCommandBase _applyAlbumForAll;
+        private DelegateCommandBase _applyPerformerForAll;
+        private DelegateCommandBase _applyTitleForAll;
+        private DelegateCommandBase _titleFromFileName;
+        private DelegateCommandBase _performerFromFileName;
+        private DelegateCommandBase _fileNameFromTags;
+        private DelegateCommandBase _fileNameFromTagsAll;
 
         public ObservableCollection<TrackModel> TrackModels => _mainWindowModel?.TrackModels;
 
@@ -48,12 +39,6 @@ namespace NTag.ViewModels
         {
             get { return _currentFolderName; }
             set { SetProperty(ref _currentFolderName, value); }
-        }
-
-        public string StartStopText
-        {
-            get { return _startStopText; }
-            set { SetProperty(ref _startStopText, value); }
         }
 
         public double ProgressValue
@@ -71,43 +56,47 @@ namespace NTag.ViewModels
         public bool IsInProgress
         {
             get { return _isInProgress; }
-            set { SetProperty(ref _isInProgress, value); }
+            set 
+            { 
+                SetProperty(ref _isInProgress, value);
+                RaiseCanExecuteChanged();
+            }
         }
 
-        public ICommand OpenFolder => _openFolder ??
+        public DelegateCommandBase OpenFolder => _openFolder ??
                     (_openFolder = new DelegateCommand(OpenFolderExecute, OpenFolderCanExecute));
 
-        public ICommand Exit => _exit ??
+        public DelegateCommandBase Exit => _exit ??
                     (_exit = new DelegateCommand(ExitExecute, ExitCanExecute));
 
-        public ICommand StartStop => _startStop ??
+        public DelegateCommandBase StartStop => _startStop ??
                     (_startStop = new DelegateCommand(StartStopExecute, StartStopCanExecute));
 
-        public ICommand SetPictureFromFile => _setPictureFromFile ??
-                    (_setPictureFromFile = new DelegateCommand<object>(SetPictureFromFileExecute, SetPictureFromFileCanExecute));
+        public DelegateCommandBase SetPictureFromFile => _setPictureFromFile ??
+                    (_setPictureFromFile = new DelegateCommand<object>(SetPictureFromFileExecute, TrackContextMenuCanExecute));
 
-        public ICommand ApplyPictureForAll => _applyPictureForAll ??
-                    (_applyPictureForAll = new DelegateCommand<object>(ApplyPictureForAllExecute, ApplyPictureForAllCanExecute));
+        public DelegateCommandBase ApplyPictureForAll => _applyPictureForAll ??
+                    (_applyPictureForAll = new DelegateCommand<object>(ApplyPictureForAllExecute, TrackContextMenuCanExecute));
 
-        public ICommand ApplyAlbumForAll => _applyAlbumForAll ??
-                    (_applyAlbumForAll = new DelegateCommand<object>(ApplyAlbumForAllExecute, ApplyAlbumForAllCanExecute));
+        public DelegateCommandBase ApplyAlbumForAll => _applyAlbumForAll ??
+                    (_applyAlbumForAll = new DelegateCommand<object>(ApplyAlbumForAllExecute, TrackContextMenuCanExecute));
 
-        public ICommand ApplyPerformerForAll => _applyPerformerForAll ??
-                    (_applyPerformerForAll = new DelegateCommand<object>(ApplyPerformerForAllExecute, ApplyPerformerForAllCanExecute));
+        public DelegateCommandBase ApplyPerformerForAll => _applyPerformerForAll ??
+                    (_applyPerformerForAll = new DelegateCommand<object>(ApplyPerformerForAllExecute, TrackContextMenuCanExecute));
 
-        public ICommand ApplyTitleForAll => _applyTitleForAll ??
-                    (_applyTitleForAll = new DelegateCommand<object>(ApplyTitleForAllExecute, ApplyTitleForAllCanExecute));
+        public DelegateCommandBase ApplyTitleForAll => _applyTitleForAll ??
+                    (_applyTitleForAll = new DelegateCommand<object>(ApplyTitleForAllExecute, TrackContextMenuCanExecute));
 
-        public ICommand TitleFromFileName => _titleFromFileName ??
-                    (_titleFromFileName = new DelegateCommand<object>(TitleFromFileNameExecute, TitleFromFileNameCanExecute));
+        public DelegateCommandBase TitleFromFileName => _titleFromFileName ??
+                    (_titleFromFileName = new DelegateCommand<object>(TitleFromFileNameExecute, TrackContextMenuCanExecute));
 
-        public ICommand PerformerFromFileName => _performerFromFileName ??
-                    (_performerFromFileName = new DelegateCommand<object>(PerformerFromFileNameExecute, PerformerFromFileNameCanExecute));
+        public DelegateCommandBase PerformerFromFileName => _performerFromFileName ??
+                    (_performerFromFileName = new DelegateCommand<object>(PerformerFromFileNameExecute, TrackContextMenuCanExecute));
 
-        public ICommand FileNameFromTags => _fileNameFromTags ??
-                    (_fileNameFromTags = new DelegateCommand<object>(FileNameFromTagsExecute, FileNameFromTagsCanExecute));
+        public DelegateCommandBase FileNameFromTags => _fileNameFromTags ??
+                    (_fileNameFromTags = new DelegateCommand<object>(FileNameFromTagsExecute, TrackContextMenuCanExecute));
 
-        public ICommand FileNameFromTagsAll => _fileNameFromTagsAll ??
+        public DelegateCommandBase FileNameFromTagsAll => _fileNameFromTagsAll ??
                     (_fileNameFromTagsAll = new DelegateCommand(FileNameFromTagsAllExecute, FileNameFromTagsAllCanExecute));
 
         public MainWindowViewModel(IConfiguration configuration)
@@ -118,7 +107,6 @@ namespace NTag.ViewModels
         private void Init(IConfiguration configuration)
         {
             _configuration = configuration;
-            _startStopText = "Start";
             _progressValue = 0;
             _progressVisibility = Visibility.Hidden;
             _mainWindowModel = new MainWindowModel(configuration)
@@ -139,6 +127,22 @@ namespace NTag.ViewModels
             Application.Current?.Dispatcher.BeginInvoke(DispatcherPriority.Normal, callback);
         }
 
+        private void RaiseCanExecuteChanged()
+        {
+            OpenFolder.RaiseCanExecuteChanged();
+            Exit.RaiseCanExecuteChanged();
+            StartStop.RaiseCanExecuteChanged();
+            SetPictureFromFile.RaiseCanExecuteChanged();
+            ApplyPictureForAll.RaiseCanExecuteChanged();
+            ApplyAlbumForAll.RaiseCanExecuteChanged();
+            ApplyPerformerForAll.RaiseCanExecuteChanged();
+            ApplyTitleForAll.RaiseCanExecuteChanged();
+            TitleFromFileName.RaiseCanExecuteChanged();
+            PerformerFromFileName.RaiseCanExecuteChanged();
+            FileNameFromTags.RaiseCanExecuteChanged();
+            FileNameFromTagsAll.RaiseCanExecuteChanged();
+        }
+
         private void OpenFolderExecute()
         {
             var openDialog = new Gat.Controls.OpenDialogView();
@@ -156,11 +160,16 @@ namespace NTag.ViewModels
 
         private bool OpenFolderCanExecute()
         {
-            return true;
+            return IsInProgress == false;
         }
 
         private void ExitExecute()
         {
+            if (IsInProgress)
+            {
+                _mainWindowModel.Stop();
+            }
+
             Application.Current?.Shutdown();
         }
 
@@ -179,7 +188,6 @@ namespace NTag.ViewModels
             {
                 await _mainWindowModel.StartAsync();
                 IsInProgress = false;
-                MessageBox.Show("Done!");
             }
         }
 
@@ -191,7 +199,7 @@ namespace NTag.ViewModels
         private bool ConfirmApplyForAll(TrackModel trackModel, string tagName)
         {
             var msg = $"Apply {tagName} from track {trackModel.TrackNumber} for All?";
-            if (MessageBox.Show(msg, "Batch Dialog", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (MessageBox.Show(msg, "Batch Dialog", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
                 return true;
             }
@@ -212,9 +220,9 @@ namespace NTag.ViewModels
             }
         }
 
-        private bool SetPictureFromFileCanExecute(object sender)
+        private bool TrackContextMenuCanExecute(object sender)
         {
-            return true;
+            return IsInProgress == false;
         }
 
         private void ApplyPictureForAllExecute(object sender)
@@ -225,22 +233,12 @@ namespace NTag.ViewModels
             }
         }
 
-        private bool ApplyPictureForAllCanExecute(object sender)
-        {
-            return true;
-        }
-
         private void ApplyAlbumForAllExecute(object sender)
         {
             if (sender is TrackModel trackModel && ConfirmApplyForAll(trackModel, "Album"))
             {
                 _mainWindowModel.DuplicateAlbumAll(trackModel);
             }
-        }
-
-        private bool ApplyAlbumForAllCanExecute(object sender)
-        {
-            return true;
         }
 
         private void ApplyPerformerForAllExecute(object sender)
@@ -251,11 +249,6 @@ namespace NTag.ViewModels
             }
         }
 
-        private bool ApplyPerformerForAllCanExecute(object sender)
-        {
-            return true;
-        }
-
         private void ApplyTitleForAllExecute(object sender)
         {
             if (sender is TrackModel trackModel && ConfirmApplyForAll(trackModel, "Title"))
@@ -264,23 +257,12 @@ namespace NTag.ViewModels
             }
         }
 
-        private bool ApplyTitleForAllCanExecute(object sender)
-        {
-            return true;
-        }
-
-
         private void TitleFromFileNameExecute(object sender)
         {
             if (sender is TrackModel trackModel)
             {
                 _mainWindowModel.TitleFromFileName(trackModel);
             }
-        }
-
-        private bool TitleFromFileNameCanExecute(object sender)
-        {
-            return true;
         }
 
         private void PerformerFromFileNameExecute(object sender)
@@ -291,11 +273,6 @@ namespace NTag.ViewModels
             }
         }
 
-        private bool PerformerFromFileNameCanExecute(object sender)
-        {
-            return true;
-        }
-
         private void FileNameFromTagsExecute(object sender)
         {
             if (sender is TrackModel trackModel)
@@ -304,15 +281,10 @@ namespace NTag.ViewModels
             }
         }
 
-        private bool FileNameFromTagsCanExecute(object sender)
-        {
-            return true;
-        }
-
         private void FileNameFromTagsAllExecute()
         {
             var msg = "Apply file names to file names from tags for All?";
-            if (MessageBox.Show(msg, "Batch Dialog", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+            if (MessageBox.Show(msg, "Batch Dialog", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
             {
                 return;
             }
@@ -322,16 +294,27 @@ namespace NTag.ViewModels
 
         private bool FileNameFromTagsAllCanExecute()
         {
-            return true;
+            return IsInProgress == false;
         }
 
         private void OnProcessingStarted()
         {
-            ProgressVisibility = Visibility.Visible;
+            UIBeginInvoke(() =>
+            {
+                IsInProgress = true;
+                ProgressValue = 0;
+                ProgressVisibility = Visibility.Visible;
+            });
         }
 
         private void OnProcessingFinished()
         {
+            UIBeginInvoke(() =>
+            {
+                MessageBox.Show("Done!");
+                IsInProgress = false;
+                ProgressVisibility = Visibility.Hidden;
+            });
         }
 
         private void OnProgressChanged(int totalCount, int doneCount)
@@ -339,7 +322,6 @@ namespace NTag.ViewModels
             var progressValue = Math.Truncate((double)doneCount / totalCount * 100D);
             UIBeginInvoke(() =>
             {
-                IsInProgress = true;
                 ProgressValue = progressValue;
             });
         }
