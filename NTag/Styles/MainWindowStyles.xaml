@@ -9,6 +9,8 @@
 
     <Converters:TrackNumberConverter x:Key="TrackNumberConverter"/>
     <Converters:TrackNumberToParityConverter x:Key="TrackNumberToParityConverter"/>
+    <Converters:ResultCodeToText x:Key="ResultCodeToText"/>
+    <Converters:ResultCodeToColor x:Key="ResultCodeToColor"/>
 
     <Color x:Key="EvenTrackBackground">#FFDCDCDC</Color>
     
@@ -31,6 +33,7 @@
                 <ColumnDefinition Width="50"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="100"/>
             </Grid.ColumnDefinitions>
 
             <Grid Grid.Column="0">
@@ -39,7 +42,8 @@
                            Text="{Binding Path=TrackNumber, Converter={StaticResource TrackNumberConverter}}"/>
             </Grid>
 
-            <Grid Grid.Column="1">
+            <Grid Grid.Column="1"
+                  HorizontalAlignment="Left">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
@@ -99,7 +103,8 @@
                            Text="{Binding Path=OriginalTitle}"/>
             </Grid>
 
-            <Grid Grid.Column="2">
+            <Grid Grid.Column="2"
+                  HorizontalAlignment="Right">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
@@ -164,6 +169,13 @@
                          Margin="0,1,0,1" 
                          HorizontalAlignment="Left" 
                          Text="{Binding Path=ModifiedTitle}"/>
+            </Grid>
+
+            <Grid Grid.Column="3">
+                <TextBlock VerticalAlignment="Center" 
+                           HorizontalAlignment="Center"
+                           Foreground="{Binding Path=ResultCode, Converter={StaticResource ResultCodeToColor}}"
+                           Text="{Binding Path=ResultCode, Converter={StaticResource ResultCodeToText}}"/>
             </Grid>
 
         </Grid>

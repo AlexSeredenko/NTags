@@ -77,6 +77,40 @@ namespace NTag.Models
             });
         }
 
+        private void ProcessTrack(TrackModel track)
+        {
+            try
+            {
+                if (!track.OriginalFileName.Equals(track.ModifiedFileName))
+                {
+                    System.IO.File.Move(Path.Combine(track.FileDir, track.OriginalFileName),
+                        Path.Combine(track.FileDir, track.ModifiedFileName));
+                }
+
+                var tagfile = TagLib.File.Create(Path.Combine(track.FileDir, track.ModifiedFileName));
+                tagfile.RemoveTags(TagTypes.AllTags);
+                tagfile.Save();
+
+                tagfile = TagLib.File.Create(Path.Combine(track.FileDir, track.ModifiedFileName));
+                tagfile.Tag.Album = track.ModifiedAlbum;
+                tagfile.Tag.Performers = new string[] { track.ModifiedPerformer };
+                tagfile.Tag.Title = track.ModifiedTitle;
+
+                if (track.ModifiedImage != null)
+                {
+                    tagfile.Tag.Pictures = new IPicture[] { track.ModifiedImage };
+                }
+
+                tagfile.Save();
+                track.ResultCode = TrackModel.SuccessfulCode;
+            }
+            catch (Exception ex)
+            {
+                track.ResultCode = TrackModel.ErrorCode;
+                track.ProcessingException = ex;
+            }
+        }
+
         public async void OpenFolder(string folderPath)
         {
             var supportedFormats = _configuration.SupportedFormats;
@@ -198,29 +232,7 @@ namespace NTag.Models
                 for (int i = 0; i < TrackModels.Count; i++)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-                    var track = TrackModels[i];
-
-                    if (!track.OriginalFileName.Equals(track.ModifiedFileName))
-                    {
-                        System.IO.File.Move(Path.Combine(track.FileDir, track.OriginalFileName),
-                            Path.Combine(track.FileDir, track.ModifiedFileName));
-                    }
-
-                    var tagfile = TagLib.File.Create(Path.Combine(track.FileDir, track.ModifiedFileName));
-                    tagfile.RemoveTags(TagTypes.AllTags);
-                    tagfile.Save();
-
-                    tagfile = TagLib.File.Create(Path.Combine(track.FileDir, track.ModifiedFileName));
-                    tagfile.Tag.Album = track.ModifiedAlbum;
-                    tagfile.Tag.Performers = new string[] { track.ModifiedPerformer };
-                    tagfile.Tag.Title = track.ModifiedTitle;
-
-                    if (track.ModifiedImage != null)
-                    {
-                        tagfile.Tag.Pictures = new IPicture[] { track.ModifiedImage };
-                    }
-
-                    tagfile.Save();
+                    ProcessTrack(TrackModels[i]);
                     ProgressChanged?.Invoke(TrackModels.Count, i + 1);
                 }
             }

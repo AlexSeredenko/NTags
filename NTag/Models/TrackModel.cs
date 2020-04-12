@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Windows.Media.Imaging;
 using Prism.Mvvm;
 using TagLib;
@@ -7,8 +8,11 @@ namespace NTag.Models
 {
     public class TrackModel : BindableBase
     {
+        public const int SuccessfulCode = 0;
+        public const int ErrorCode = 1;
+
         private int _trackNumber;
-        private bool _isEven;
+        private int _resultCode = -1;
         private string _fileDir;
 
         private string _originalFileName;
@@ -25,20 +29,18 @@ namespace NTag.Models
         private IPicture _modifiedImage;
         private BitmapFrame _modifiedImageVisible;
 
+        public Exception ProcessingException { get; set; }
+
         public int TrackNumber
         {
             get { return _trackNumber; }
-            set 
-            { 
-                SetProperty(ref _trackNumber, value);
-                IsEven = _trackNumber % 2 == 0;
-            }
+            set { SetProperty(ref _trackNumber, value); }
         }
 
-        public bool IsEven
+        public int ResultCode
         {
-            get { return _isEven; }
-            private set { SetProperty(ref _isEven, value); }
+            get { return _resultCode; }
+            set { SetProperty(ref _resultCode, value); }
         }
 
         public string FileDir
