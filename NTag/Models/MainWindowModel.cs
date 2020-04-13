@@ -19,6 +19,7 @@ namespace NTag.Models
         public Action ProcessingStarted { get; set; }
         public Action ProcessingFinished { get; set; }
         public Action<int, int> ProgressChanged { get; set; }
+        public Action<string> Notification { get; set; }
 
         public ObservableCollection<TrackModel> TrackModels { get; set; }
 
@@ -73,6 +74,15 @@ namespace NTag.Models
 
                 return trackModel;
             });
+        }
+
+        private char[] CheckTrackTags(TrackModel track)
+        {
+            var result = track.ModifiedAlbum.Where(x => !_configuration.AllowedChars.Contains(x))
+                .Union(track.ModifiedPerformer.Where(x => !_configuration.AllowedChars.Contains(x)))
+                .Union(track.ModifiedTitle.Where(x => !_configuration.AllowedChars.Contains(x)));
+
+            return result?.ToArray();
         }
 
         [Conditional("DEBUG")]
@@ -231,6 +241,17 @@ namespace NTag.Models
 
         public void Start(CancellationToken cancellationToken)
         {
+            for (int i = 0; i < TrackModels.Count; i++)
+            {
+                var checkRes = CheckTrackTags(TrackModels[i]);
+                if (checkRes != null && checkRes.Length > 0)
+                {
+                    var msg = $"Forbidden symbols in track #{TrackModels[i].TrackNumber}:{Environment.NewLine}{new string(checkRes)}";
+                    Notification?.Invoke(msg);
+                    return;
+                }
+            }
+
             ProcessingStarted?.Invoke();
 
             try

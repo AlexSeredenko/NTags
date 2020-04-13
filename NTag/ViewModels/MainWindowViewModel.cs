@@ -109,11 +109,13 @@ namespace NTag.ViewModels
             _configuration = configuration;
             _progressValue = 0;
             _progressVisibility = Visibility.Hidden;
+
             _mainWindowModel = new MainWindowModel(configuration)
             {
                 ProgressChanged = OnProgressChanged,
                 ProcessingStarted = OnProcessingStarted,
-                ProcessingFinished = OnProcessingFinished
+                ProcessingFinished = OnProcessingFinished,
+                Notification = OnNotification
             };
 
             if (!string.IsNullOrEmpty(initFolder))
@@ -324,6 +326,14 @@ namespace NTag.ViewModels
             UIBeginInvoke(() =>
             {
                 ProgressValue = progressValue;
+            });
+        }
+
+        private void OnNotification(string msg)
+        {
+            UIBeginInvoke(() =>
+            {
+                MessageBox.Show(msg);
             });
         }
     }

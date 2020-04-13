@@ -6,5 +6,6 @@ namespace NTag.Interfaces
     {
         public IEnumerable<string> SupportedFormats { get; set; }
         public IEnumerable<string> SupportedImageFormats { get; set; }
+        public IEnumerable<char> AllowedChars { get; set; }
     }
 }
