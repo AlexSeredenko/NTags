@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using UnidecodeSharpFork;
 using TagLib;
 using NTag.Interfaces;
+using System.Windows.Media.Imaging;
 
 namespace NTag.Models
 {
@@ -236,6 +237,21 @@ namespace NTag.Models
             foreach (var tm in TrackModels.Where(x => !x.Equals(trackModel)))
             {
                 tm.ModifiedTitle = trackModel.ModifiedTitle;
+            }
+        }
+
+        public void SaveTagImageToFile(TrackModel trackModel, string filePath)
+        {
+            var bitmapFrame = trackModel.GetBitmapFrameFromPicture(trackModel.OriginalImage);
+
+            if (bitmapFrame != null)
+            {
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    var encoder = new JpegBitmapEncoder();
+                    encoder.Frames.Add(bitmapFrame);
+                    encoder.Save(fileStream);
+                }
             }
         }
 

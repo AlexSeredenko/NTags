@@ -121,7 +121,7 @@ namespace NTag.Models
             set { SetProperty(ref _modifiedImageVisible, value); }
         }
 
-        private BitmapFrame GetBitmapFrameFromPicture(IPicture picture)
+        public BitmapFrame GetBitmapFrameFromPicture(IPicture picture)
         {
             if (picture == null || picture.Type == PictureType.NotAPicture)
             {
@@ -131,6 +131,7 @@ namespace NTag.Models
             var pictureMemoryStream = new System.IO.MemoryStream(picture.Data.ToArray());
             pictureMemoryStream.Position = 0;
             var bitmapFrame = BitmapFrame.Create(pictureMemoryStream);
+            bitmapFrame.Freeze();
             return bitmapFrame;
         }
 

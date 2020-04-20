@@ -32,6 +32,8 @@ namespace NTag.ViewModels
         private DelegateCommandBase _performerFromFileName;
         private DelegateCommandBase _fileNameFromTags;
         private DelegateCommandBase _fileNameFromTagsAll;
+        private DelegateCommandBase _saveTagImageToFile;
+        private DelegateCommandBase _tracksMenuOpening;
 
         public ObservableCollection<TrackModel> TrackModels => _mainWindowModel?.TrackModels;
 
@@ -99,6 +101,12 @@ namespace NTag.ViewModels
         public DelegateCommandBase FileNameFromTagsAll => _fileNameFromTagsAll ??
                     (_fileNameFromTagsAll = new DelegateCommand(FileNameFromTagsAllExecute, FileNameFromTagsAllCanExecute));
 
+        public DelegateCommandBase SaveTagImageToFile => _saveTagImageToFile ??
+                    (_saveTagImageToFile = new DelegateCommand<object>(SaveTagImageToFileExecute, SaveTagImageToFileCanExecute));
+
+        public DelegateCommandBase TracksMenuOpening => _tracksMenuOpening ??
+                    (_tracksMenuOpening = new DelegateCommand(TracksMenuOpeningExecute));
+
         public MainWindowViewModel(IConfiguration configuration, string initFolder = null)
         {
             Init(configuration, initFolder);
@@ -144,6 +152,7 @@ namespace NTag.ViewModels
             PerformerFromFileName.RaiseCanExecuteChanged();
             FileNameFromTags.RaiseCanExecuteChanged();
             FileNameFromTagsAll.RaiseCanExecuteChanged();
+            SaveTagImageToFile.RaiseCanExecuteChanged();
         }
 
         private void OpenFolderExecute()
@@ -298,6 +307,38 @@ namespace NTag.ViewModels
         private bool FileNameFromTagsAllCanExecute()
         {
             return IsInProgress == false;
+        }
+
+        private void TracksMenuOpeningExecute()
+        {
+            SaveTagImageToFile.RaiseCanExecuteChanged();
+        }
+
+        private void SaveTagImageToFileExecute(object sender)
+        {
+            if (sender is TrackModel trackModel)
+            {
+                var saveFileDialog = new SaveFileDialog();
+                saveFileDialog.DefaultExt = ".jpg";
+                saveFileDialog.Filter = "Jpeg file (*.jpg)|*.jpg";
+                saveFileDialog.Title = "Save Tag image to file";
+
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    _mainWindowModel.SaveTagImageToFile(trackModel, saveFileDialog.FileName);
+                }
+            }
+        }    
+
+        private bool SaveTagImageToFileCanExecute(object sender)
+        {
+            if (sender is TrackModel trackModel)
+            {
+                var result = (trackModel.OriginalImageVisible != null) && TrackContextMenuCanExecute(sender);
+                return result;
+            }
+
+            return false;
         }
 
         private void OnProcessingStarted()

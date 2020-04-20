@@ -194,6 +194,9 @@
         <MenuItem Header="File name from tags"
                   Command="{Binding Path=FileNameFromTags}"
                   CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Path=PlacementTarget.SelectedItem}"/>
+        <MenuItem Header="Save tag image to file"
+                  Command="{Binding Path=SaveTagImageToFile}"
+                  CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Path=PlacementTarget.SelectedItem}"/>
     </ContextMenu>
 
 </ResourceDictionary>

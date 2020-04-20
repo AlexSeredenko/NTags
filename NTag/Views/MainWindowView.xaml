@@ -3,8 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:local="clr-namespace:NTag.Views"
         xmlns:Converters="clr-namespace:NTag.Converters"
+        xmlns:Behaviors="clr-namespace:NTag.Behaviors"
         mc:Ignorable="d"
         Title="MainWindowView" 
         Height="500" Width="900">
@@ -91,6 +93,9 @@
                          ItemsSource="{Binding Path=TrackModels}"
                          ItemTemplate="{StaticResource TrackTamplate}"                         
                          ContextMenu="{StaticResource TrackContextMenu}">
+                    <i:Interaction.Behaviors>
+                        <Behaviors:TracksMenuBehavior MenuOpening="{Binding Path=TracksMenuOpening}"/>
+                    </i:Interaction.Behaviors>
                 </ListBox>
             </Grid>
 
