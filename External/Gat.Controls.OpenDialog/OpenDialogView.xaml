@@ -30,7 +30,7 @@
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="2*" />
+				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
 
 			<TreeView x:Name="Folders"
@@ -65,7 +65,8 @@
 
 			<GridSplitter Grid.Column="1"
 						  Width="5"
-						  ResizeBehavior="PreviousAndNext" />
+						  ResizeBehavior="PreviousAndNext" 
+                          Visibility="Collapsed"/>
 
 			<DataGrid x:Name="Folder"
 					  Grid.Column="2"
@@ -80,7 +81,8 @@
 					  ColumnWidth="Auto"
 					  Background="Transparent"
 					  GridLinesVisibility="None"
-					  SelectionMode="Single">
+					  SelectionMode="Single"
+                      Visibility="Collapsed">
 				<DataGrid.CellStyle>
 					<Style TargetType="DataGridCell">
 						<Style.Triggers>

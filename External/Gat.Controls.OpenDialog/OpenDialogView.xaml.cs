@@ -56,7 +56,7 @@ namespace Gat.Controls
 			_Window.ShowInTaskbar = false;
 			_Window.Topmost = true;
 			_Window.Height = 420;
-			_Window.Width = 700;
+			_Window.Width = 350;
 			_Window.Owner = e.Owner;
 			_Window.WindowStartupLocation = e.StartupLocation;
 			_Window.ShowDialog();
