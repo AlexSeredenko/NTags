@@ -42,11 +42,16 @@ namespace NTag.Models
                     throw new FileNotFoundException(imgPath);
                 }
 
-                var bitmap = new System.Drawing.Bitmap(imgPath);
+                var bitmapSize = default(System.Drawing.Size);
 
-                if (bitmap.Size.Width > _configuration.AllowedTagImageSize.Width ||
-                    bitmap.Size.Height > _configuration.AllowedTagImageSize.Height ||
-                    bitmap.Size.Width != bitmap.Size.Height)
+                using (var bitmap = new System.Drawing.Bitmap(imgPath))
+                {
+                    bitmapSize = bitmap.Size;
+                }
+
+                if (bitmapSize.Width > _configuration.AllowedTagImageSize.Width ||
+                    bitmapSize.Height > _configuration.AllowedTagImageSize.Height ||
+                    bitmapSize.Width != bitmapSize.Height)
                 {
                     var stringBuilder = new StringBuilder();
                     stringBuilder.Append("Unsupported image size. Max size: ");
