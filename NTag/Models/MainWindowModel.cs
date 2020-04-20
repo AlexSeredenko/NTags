@@ -1,14 +1,16 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
+using System.Windows.Media.Imaging;
 using UnidecodeSharpFork;
 using TagLib;
 using NTag.Interfaces;
-using System.Windows.Media.Imaging;
+using NTag.Exceptions;
 
 namespace NTag.Models
 {
@@ -31,7 +33,7 @@ namespace NTag.Models
             TrackModels = new ObservableCollection<TrackModel>();
         }
 
-        private Task<IPicture> LoadPictureAsync(string imgPath)
+        private Task<bool> CheckPictureAsync(string imgPath)
         {
             return Task.Run(() =>
             {
@@ -40,6 +42,31 @@ namespace NTag.Models
                     throw new FileNotFoundException(imgPath);
                 }
 
+                var bitmap = new System.Drawing.Bitmap(imgPath);
+
+                if (bitmap.Size.Width > _configuration.AllowedTagImageSize.Width ||
+                    bitmap.Size.Height > _configuration.AllowedTagImageSize.Height ||
+                    bitmap.Size.Width != bitmap.Size.Height)
+                {
+                    var stringBuilder = new StringBuilder();
+                    stringBuilder.Append("Unsupported image size. Max size: ");
+                    stringBuilder.Append(_configuration.AllowedTagImageSize.Width.ToString());
+                    stringBuilder.Append("x");
+                    stringBuilder.Append(_configuration.AllowedTagImageSize.Height.ToString());
+                    stringBuilder.Append(Environment.NewLine);
+                    stringBuilder.Append("Width should be equal height!");
+
+                    throw new UnsupportedImageSizeException(stringBuilder.ToString());
+                }
+
+                return true;
+            });
+        }
+
+        private Task<IPicture> LoadPictureAsync(string imgPath)
+        {
+            return Task.Run(() =>
+            {
                 var pic = new Picture(imgPath);
                 pic.Type = PictureType.BackCover;
 
@@ -150,8 +177,22 @@ namespace NTag.Models
 
         public async void SetPictureFromFile(TrackModel trackModel, string imgPath)
         {
-            var pic = await LoadPictureAsync(imgPath);
-            SetPicture(trackModel, pic);
+            var checkResult = false;
+
+            try
+            {
+                checkResult = await CheckPictureAsync(imgPath);
+            }
+            catch (UnsupportedImageSizeException ex)
+            {
+                Notification?.Invoke(ex.Message);
+            }
+
+            if (checkResult)
+            {
+                var pic = await LoadPictureAsync(imgPath);
+                SetPicture(trackModel, pic);
+            }
         }
 
         public void TitleFromFileName(TrackModel trackModel)

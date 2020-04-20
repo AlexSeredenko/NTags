@@ -8,6 +8,7 @@ using Prism.Mvvm;
 using Prism.Commands;
 using NTag.Models;
 using NTag.Interfaces;
+using NTag.Exceptions;
 
 namespace NTag.ViewModels
 {
@@ -225,6 +226,8 @@ namespace NTag.ViewModels
             {
                 var openFileDialog = new OpenFileDialog();
                 openFileDialog.Filter = "Images |" + string.Join($";", _configuration.SupportedImageFormats.Select(x => $"*{x}"));
+                openFileDialog.Title = "Open image";
+
                 if (openFileDialog.ShowDialog() == true)
                 {
                     _mainWindowModel.SetPictureFromFile(trackModel, openFileDialog.FileName);
@@ -328,7 +331,7 @@ namespace NTag.ViewModels
                     _mainWindowModel.SaveTagImageToFile(trackModel, saveFileDialog.FileName);
                 }
             }
-        }    
+        }
 
         private bool SaveTagImageToFileCanExecute(object sender)
         {
@@ -355,7 +358,8 @@ namespace NTag.ViewModels
         {
             UIBeginInvoke(() =>
             {
-                MessageBox.Show("Done!");
+                var title = Application.Current?.MainWindow?.Title ?? string.Empty;
+                MessageBox.Show("Done!", title);
                 IsInProgress = false;
                 ProgressVisibility = Visibility.Hidden;
             });
@@ -374,7 +378,8 @@ namespace NTag.ViewModels
         {
             UIBeginInvoke(() =>
             {
-                MessageBox.Show(msg);
+                var title = Application.Current?.MainWindow?.Title ?? string.Empty;
+                MessageBox.Show(msg, title);
             });
         }
     }

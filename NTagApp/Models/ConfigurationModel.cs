@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
+using System.Windows;
+using System.Collections.Generic;
 using NTag.Interfaces;
 
 namespace NTagApp.Models
@@ -9,6 +10,7 @@ namespace NTagApp.Models
         public IEnumerable<string> SupportedFormats { get; set; }
         public IEnumerable<string> SupportedImageFormats { get; set; }
         public IEnumerable<char> AllowedChars { get; set; }
+        public Size AllowedTagImageSize { get; set; }
 
         public ConfigurationModel()
         {
@@ -20,6 +22,8 @@ namespace NTagApp.Models
             .Union(Enumerable.Range('0', '9' - '0' + 1).Select(x => (char)x))
             .Union(new char[] { ' ', '.', ',', ':', '-', '_', '\'', '"', '!', '+', '&', '$', '*', '#', '(', ')' })
             .ToArray();
+
+            AllowedTagImageSize = new Size(200, 200);
         }
     }
 }
