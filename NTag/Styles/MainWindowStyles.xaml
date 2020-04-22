@@ -11,10 +11,13 @@
     <Converters:TrackNumberToParityConverter x:Key="TrackNumberToParityConverter"/>
     <Converters:ResultCodeToText x:Key="ResultCodeToText"/>
     <Converters:ResultCodeToColor x:Key="ResultCodeToColor"/>
+    <Converters:SelectedToFontWeightConverter x:Key="SelectedToFontWeightConverter"/>
 
-    <Color x:Key="EvenTrackBackground">#FFDCDCDC</Color>
-    
-    <Style x:Key="TrackTamplateStyle" TargetType="Grid">
+    <Color x:Key="EvenTrackBackground">#f2f2f2</Color>
+
+    <Style x:Key="TrackTamplateStyle" TargetType="ListBoxItem">
+        <Setter Property="IsSelected" Value="{Binding Path=IsSelected, Mode=OneWayToSource}"/>
+        
         <Style.Triggers>
             <DataTrigger Binding="{Binding Path=TrackNumber, Converter={StaticResource TrackNumberToParityConverter}}" Value="True">
                 <Setter Property="Background">
@@ -23,12 +26,17 @@
                     </Setter.Value>
                 </Setter>
             </DataTrigger>
+
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Foreground" Value="DarkBlue"/>
+                <Setter Property="BorderThickness" Value="2"/>
+            </Trigger>
         </Style.Triggers>
     </Style>
 
     <DataTemplate x:Key="TrackTamplate">
-        <Grid Style="{StaticResource TrackTamplateStyle}">
-            
+        <Grid>
+ 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="50"/>
                 <ColumnDefinition Width="*"/>
@@ -38,7 +46,8 @@
 
             <Grid Grid.Column="0">
                 <TextBlock VerticalAlignment="Center" 
-                           HorizontalAlignment="Center" 
+                           HorizontalAlignment="Center"
+                           FontWeight="{Binding Path=IsSelected, Converter={StaticResource SelectedToFontWeightConverter}}"
                            Text="{Binding Path=TrackNumber, Converter={StaticResource TrackNumberConverter}}"/>
             </Grid>
 

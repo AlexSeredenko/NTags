@@ -12,6 +12,7 @@ namespace NTag.Models
         public const int ErrorCode = 1;
 
         private int _trackNumber;
+        private bool _isSelected;
         private int _resultCode = -1;
         private string _fileDir;
 
@@ -35,6 +36,12 @@ namespace NTag.Models
         {
             get { return _trackNumber; }
             set { SetProperty(ref _trackNumber, value); }
+        }
+
+        public bool IsSelected
+        {
+            get { return _isSelected; }
+            set { SetProperty(ref _isSelected, value); }
         }
 
         public int ResultCode

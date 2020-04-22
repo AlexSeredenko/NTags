@@ -92,9 +92,12 @@
 
                 <ListBox x:Name="tracksList" Grid.Row="1"
                          HorizontalContentAlignment="Stretch"
+                         SelectionMode="Single"
                          ItemsSource="{Binding Path=TrackModels}"
-                         ItemTemplate="{StaticResource TrackTamplate}"                         
+                         ItemTemplate="{StaticResource TrackTamplate}"
+                         ItemContainerStyle="{StaticResource TrackTamplateStyle}"
                          ContextMenu="{StaticResource TrackContextMenu}">
+
                     <i:Interaction.Behaviors>
                         <Behaviors:TracksMenuBehavior MenuOpening="{Binding Path=TracksMenuOpening}"/>
                     </i:Interaction.Behaviors>
