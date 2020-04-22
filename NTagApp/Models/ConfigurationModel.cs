@@ -15,7 +15,7 @@ namespace NTagApp.Models
         public ConfigurationModel()
         {
             SupportedFormats = new string[] { ".mp3" };
-            SupportedImageFormats = new string[] { ".png", ".jpg", ".bmp" };
+            SupportedImageFormats = new string[] { ".jpg" };
 
             AllowedChars = Enumerable.Range('a', 'z' - 'a' + 1).Select(x => (char)x)
             .Union(Enumerable.Range('A', 'Z' - 'A' + 1).Select(x => (char)x))

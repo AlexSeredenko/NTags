@@ -8,7 +8,6 @@ using Prism.Mvvm;
 using Prism.Commands;
 using NTag.Models;
 using NTag.Interfaces;
-using NTag.Exceptions;
 
 namespace NTag.ViewModels
 {
@@ -322,8 +321,8 @@ namespace NTag.ViewModels
             if (sender is TrackModel trackModel)
             {
                 var saveFileDialog = new SaveFileDialog();
-                saveFileDialog.DefaultExt = ".jpg";
-                saveFileDialog.Filter = "Jpeg file (*.jpg)|*.jpg";
+                saveFileDialog.DefaultExt = _configuration.SupportedImageFormats.First();
+                saveFileDialog.Filter = "Images |" + string.Join($";", _configuration.SupportedImageFormats.Select(x => $"*{x}"));
                 saveFileDialog.Title = "Save Tag image to file";
 
                 if (saveFileDialog.ShowDialog() == true)
