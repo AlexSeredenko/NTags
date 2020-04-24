@@ -160,7 +160,7 @@ namespace NTag.Models
             }
         }
 
-        public async void OpenFolder(string folderPath)
+        public async Task OpenFolder(string folderPath)
         {
             var supportedFormats = _configuration.SupportedFormats;
             var mediaFiles = Directory.GetFiles(folderPath, "*.*", SearchOption.TopDirectoryOnly)
@@ -175,12 +175,12 @@ namespace NTag.Models
             }
         }
 
-        public void SetPicture(TrackModel trackModel, IPicture pic)
+        private void SetPicture(TrackModel trackModel, IPicture pic)
         {
             trackModel.ModifiedImage = pic;
         }
 
-        public async void SetPictureFromFile(TrackModel trackModel, string imgPath)
+        public async Task SetPictureFromFile(TrackModel trackModel, string imgPath)
         {
             var checkResult = false;
 
@@ -204,9 +204,9 @@ namespace NTag.Models
         {
             var title = string.Empty;
 
-            if (trackModel.ModifiedFileName.Contains("-"))
+            if (trackModel.ModifiedFileName.Contains(_configuration.PerformerTitleDelimiter))
             {
-                title = trackModel.ModifiedFileName.Split("-").LastOrDefault()?.Trim();
+                title = trackModel.ModifiedFileName.Split(_configuration.PerformerTitleDelimiter).LastOrDefault()?.Trim();
             }
 
             if (string.IsNullOrEmpty(title))
@@ -221,9 +221,9 @@ namespace NTag.Models
         {
             var performer = string.Empty;
 
-            if (trackModel.ModifiedFileName.Contains("-"))
+            if (trackModel.ModifiedFileName.Contains(_configuration.PerformerTitleDelimiter))
             {
-                performer = trackModel.ModifiedFileName.Split("-").FirstOrDefault()?.Trim();
+                performer = trackModel.ModifiedFileName.Split(_configuration.PerformerTitleDelimiter).FirstOrDefault()?.Trim();
             }
 
             if (string.IsNullOrEmpty(performer))
@@ -240,7 +240,7 @@ namespace NTag.Models
                 !string.IsNullOrEmpty(trackModel.ModifiedTitle))
             {
                 var ext = Path.GetExtension(trackModel.ModifiedFileName);
-                trackModel.ModifiedFileName = $"{trackModel.ModifiedPerformer.Trim()} - {trackModel.ModifiedTitle.Trim()}{ext}";
+                trackModel.ModifiedFileName = $"{trackModel.ModifiedPerformer.Trim()} {_configuration.PerformerTitleDelimiter} {trackModel.ModifiedTitle.Trim()}{ext}";
             }
         }
 

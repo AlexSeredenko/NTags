@@ -9,5 +9,6 @@ namespace NTag.Interfaces
         public IEnumerable<string> SupportedImageFormats { get; set; }
         public IEnumerable<char> AllowedChars { get; set; }
         public Size AllowedTagImageSize { get; set; }
+        public string PerformerTitleDelimiter { get; set; }
     }
 }

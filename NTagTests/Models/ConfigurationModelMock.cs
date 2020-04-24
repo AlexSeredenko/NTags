@@ -1,11 +1,12 @@
-﻿using System.Linq;
-using System.Windows;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
 using NTag.Interfaces;
 
-namespace NTagApp.Models
+namespace NTagTests.Models
 {
-    internal class ConfigurationModel : IConfiguration
+    internal class ConfigurationModelMock : IConfiguration
     {
         public IEnumerable<string> SupportedFormats { get; set; }
         public IEnumerable<string> SupportedImageFormats { get; set; }
@@ -13,19 +14,13 @@ namespace NTagApp.Models
         public Size AllowedTagImageSize { get; set; }
         public string PerformerTitleDelimiter { get; set; }
 
-        public ConfigurationModel()
+        public ConfigurationModelMock()
         {
             SupportedFormats = new string[] { ".mp3" };
             SupportedImageFormats = new string[] { ".jpg" };
-
-            AllowedChars = Enumerable.Range('a', 'z' - 'a' + 1).Select(x => (char)x)
-            .Union(Enumerable.Range('A', 'Z' - 'A' + 1).Select(x => (char)x))
-            .Union(Enumerable.Range('0', '9' - '0' + 1).Select(x => (char)x))
-            .Union(new char[] { ' ', '.', ',', ':', '-', '_', '\'', '"', '!', '+', '&', '$', '*', '#', '(', ')' })
-            .ToArray();
-
+            AllowedChars = Enumerable.Range(Char.MinValue, Char.MaxValue - 1).Select(x => (char)x).ToArray();
             AllowedTagImageSize = new Size(200, 200);
             PerformerTitleDelimiter = "-";
-        }
+    }
     }
 }
