@@ -8,3 +8,5 @@ The software has a predefined logic for automatic tags changes:
 [UnidecodeSharpFork](https://bitbucket.org/DimaStefantsov/unidecodesharpfork)
 
 [WPF Open Dialog](https://archive.codeplex.com/?p=opendialog)
+
+[TagLib#](https://github.com/mono/taglib-sharp)
