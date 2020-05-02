@@ -73,7 +73,7 @@ namespace NTag.Models
             return Task.Run(() =>
             {
                 var pic = new Picture(imgPath);
-                pic.Type = PictureType.BackCover;
+                pic.Type = PictureType.FrontCover;
 
                 return (IPicture)pic;
             });
